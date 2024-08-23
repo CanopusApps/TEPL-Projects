@@ -1,0 +1,79 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32929.386
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TEPLQDMSWS", "TEPLQDMSWS\TEPLQDMSWS.csproj", "{0A22DF1D-41A4-45E6-A3C2-A066BFBDAB62}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TEPL.QMS.Common", "..\QMSNPI\TEPLQMS-Delivery2\TEPL.QMS.Common\TEPL.QMS.Common.csproj", "{79CDCE82-380D-48D2-AC4D-9919E209F5F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TEPL.QMS.BLL", "..\QMSNPI\TEPLQMS-Delivery2\TEPL.QMS.BLL\TEPL.QMS.BLL.csproj", "{F4511F3B-34E2-463D-A9D8-02031BF0C913}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TEPL.QMS.DAL", "..\QMSNPI\TEPLQMS-Delivery2\TEPL.QMS.DAL\TEPL.QMS.DAL.csproj", "{43D70504-B6B4-45F4-B268-8912DCA49C89}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0A22DF1D-41A4-45E6-A3C2-A066BFBDAB62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A22DF1D-41A4-45E6-A3C2-A066BFBDAB62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A22DF1D-41A4-45E6-A3C2-A066BFBDAB62}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0A22DF1D-41A4-45E6-A3C2-A066BFBDAB62}.Debug|x64.Build.0 = Debug|Any CPU
+		{0A22DF1D-41A4-45E6-A3C2-A066BFBDAB62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A22DF1D-41A4-45E6-A3C2-A066BFBDAB62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A22DF1D-41A4-45E6-A3C2-A066BFBDAB62}.Release|x64.ActiveCfg = Release|Any CPU
+		{0A22DF1D-41A4-45E6-A3C2-A066BFBDAB62}.Release|x64.Build.0 = Release|Any CPU
+		{79CDCE82-380D-48D2-AC4D-9919E209F5F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79CDCE82-380D-48D2-AC4D-9919E209F5F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79CDCE82-380D-48D2-AC4D-9919E209F5F2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{79CDCE82-380D-48D2-AC4D-9919E209F5F2}.Debug|x64.Build.0 = Debug|Any CPU
+		{79CDCE82-380D-48D2-AC4D-9919E209F5F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79CDCE82-380D-48D2-AC4D-9919E209F5F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79CDCE82-380D-48D2-AC4D-9919E209F5F2}.Release|x64.ActiveCfg = Release|Any CPU
+		{79CDCE82-380D-48D2-AC4D-9919E209F5F2}.Release|x64.Build.0 = Release|Any CPU
+		{F4511F3B-34E2-463D-A9D8-02031BF0C913}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4511F3B-34E2-463D-A9D8-02031BF0C913}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4511F3B-34E2-463D-A9D8-02031BF0C913}.Debug|x64.ActiveCfg = Debug|x64
+		{F4511F3B-34E2-463D-A9D8-02031BF0C913}.Debug|x64.Build.0 = Debug|x64
+		{F4511F3B-34E2-463D-A9D8-02031BF0C913}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4511F3B-34E2-463D-A9D8-02031BF0C913}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4511F3B-34E2-463D-A9D8-02031BF0C913}.Release|x64.ActiveCfg = Release|x64
+		{F4511F3B-34E2-463D-A9D8-02031BF0C913}.Release|x64.Build.0 = Release|x64
+		{43D70504-B6B4-45F4-B268-8912DCA49C89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43D70504-B6B4-45F4-B268-8912DCA49C89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43D70504-B6B4-45F4-B268-8912DCA49C89}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{43D70504-B6B4-45F4-B268-8912DCA49C89}.Debug|x64.Build.0 = Debug|Any CPU
+		{43D70504-B6B4-45F4-B268-8912DCA49C89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43D70504-B6B4-45F4-B268-8912DCA49C89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43D70504-B6B4-45F4-B268-8912DCA49C89}.Release|x64.ActiveCfg = Release|Any CPU
+		{43D70504-B6B4-45F4-B268-8912DCA49C89}.Release|x64.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {174FC338-56B6-48C9-8BC6-414182A12A6A}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 5
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://dev.azure.com/sivacanopus
+		SccProjectUniqueName0 = ..\\QMSNPI\\TEPLQMS-Delivery2\\TEPL.QMS.Common\\TEPL.QMS.Common.csproj
+		SccProjectName0 = ../TEPL.QMS.Common
+		SccLocalPath0 = ..\\QMSNPI\\TEPLQMS-Delivery2\\TEPL.QMS.Common
+		SccProjectUniqueName1 = ..\\QMSNPI\\TEPLQMS-Delivery2\\TEPL.QMS.BLL\\TEPL.QMS.BLL.csproj
+		SccProjectName1 = ../TEPL.QMS.BLL
+		SccLocalPath1 = ..\\QMSNPI\\TEPLQMS-Delivery2\\TEPL.QMS.BLL
+		SccProjectUniqueName2 = ..\\QMSNPI\\TEPLQMS-Delivery2\\TEPL.QMS.DAL\\TEPL.QMS.DAL.csproj
+		SccProjectName2 = ../TEPL.QMS.DAL
+		SccLocalPath2 = ..\\QMSNPI\\TEPLQMS-Delivery2\\TEPL.QMS.DAL
+		SccLocalPath3 = .
+		SccProjectUniqueName4 = TEPLQDMSWS\\TEPLQDMSWS.csproj
+		SccProjectName4 = TEPLQDMSWS
+		SccLocalPath4 = TEPLQDMSWS
+	EndGlobalSection
+EndGlobal
