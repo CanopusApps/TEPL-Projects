@@ -13,7 +13,7 @@ namespace TEPL.QMS.DAL.Database.Component
 {
     public class QMSAdminDAL
     {
-        public DataTable GetDocumentNumbers(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode)
+        public DataTable GetDocumentNumbers(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode, string FunctionCode)
         {
             DataTable dt = new DataTable();
             try
@@ -27,6 +27,7 @@ namespace TEPL.QMS.DAL.Database.Component
                         cmd.Parameters.Add("@SectionCode", SqlDbType.NVarChar, 10).Value = SectionCode;
                         cmd.Parameters.Add("@ProjectCode", SqlDbType.NVarChar, 10).Value = ProjectCode;
                         cmd.Parameters.Add("@DocumentCategoryCode", SqlDbType.NVarChar, 10).Value = DocumentCategoryCode;
+                        cmd.Parameters.Add("@FunctionCode", SqlDbType.NVarChar, 10).Value = FunctionCode;
                         using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                         {
                             sda.Fill(dt);
@@ -106,6 +107,33 @@ namespace TEPL.QMS.DAL.Database.Component
             }
             return ds;
         }
+
+        public DataSet ArchiveDocument(Guid UserID, Guid DocumentID, string DocumentNo)
+        {
+            DataSet ds = new DataSet();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spArchiveDocument, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserID", SqlDbType.UniqueIdentifier).Value = UserID;
+                        cmd.Parameters.Add("@DocumentID", SqlDbType.UniqueIdentifier).Value = DocumentID;
+                        cmd.Parameters.Add("@DocumentNo", SqlDbType.NVarChar, 100).Value = DocumentNo;
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(ds);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return ds;
+        }
         public DataTable AddDepartment(Departments objDept)
         {
             DataTable dt = new DataTable();
@@ -118,6 +146,7 @@ namespace TEPL.QMS.DAL.Database.Component
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@DepartmentCode", SqlDbType.NVarChar, 10).Value = objDept.Code;
                         cmd.Parameters.Add("@DepartmentName", SqlDbType.NVarChar, 100).Value = objDept.Title;
+                        cmd.Parameters.Add("@DeptHODID", SqlDbType.UniqueIdentifier).Value = objDept.HODID;
                         using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                         {
                             sda.Fill(dt);
@@ -144,6 +173,7 @@ namespace TEPL.QMS.DAL.Database.Component
                         cmd.Parameters.Add("@DepartmentID", SqlDbType.UniqueIdentifier).Value = objDept.ID;
                         cmd.Parameters.Add("@DepartmentCode", SqlDbType.NVarChar, 10).Value = objDept.Code;
                         cmd.Parameters.Add("@DepartmentName", SqlDbType.NVarChar, 100).Value = objDept.Title;
+                        cmd.Parameters.Add("@DeptHODID", SqlDbType.UniqueIdentifier).Value = objDept.HODID;
                         cmd.Parameters.Add("@Active", SqlDbType.Bit).Value = objDept.Active;
                         using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                         {
@@ -285,6 +315,31 @@ namespace TEPL.QMS.DAL.Database.Component
             }
             return dt;
         }
+
+        public DataTable GetActiveLocations()
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spGetActiveLocations, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(dt);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dt;
+        }
+
         public DataTable GetActiveDepartments()
         {
             DataTable dt = new DataTable();
@@ -293,6 +348,29 @@ namespace TEPL.QMS.DAL.Database.Component
                 using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
                 {
                     using (SqlCommand cmd = new SqlCommand(QMSConstants.spGetActiveDepartments, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(dt);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dt;
+        }
+        public DataTable GetActiveFunctions()
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spGetActiveFunctions, con))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
@@ -715,6 +793,102 @@ namespace TEPL.QMS.DAL.Database.Component
             }
             return dt;
         }
+
+        public (DataTable, int) GetPublishedDocuments_ServerSide(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode, string DocumentDescription, Guid UserID, int skip, int pageSize)
+        {
+            DataTable dt = new DataTable();
+            int totalRows = 0;
+            try
+            {
+                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spGetPublishedDocuments_ServerSide, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@DepartmentCode", SqlDbType.NVarChar, 10).Value = DepartmentCode;
+                        cmd.Parameters.Add("@SectionCode", SqlDbType.NVarChar, 10).Value = SectionCode;
+                        cmd.Parameters.Add("@ProjectCode", SqlDbType.NVarChar, 10).Value = ProjectCode;
+                        cmd.Parameters.Add("@DocumentCategoryCode", SqlDbType.NVarChar, 10).Value = DocumentCategoryCode;
+                        cmd.Parameters.Add("@DocumentDescription", SqlDbType.NVarChar, 500).Value = DocumentDescription;
+                        cmd.Parameters.Add("@UserID", SqlDbType.UniqueIdentifier).Value = UserID;
+                        cmd.Parameters.Add("@PageNumber", SqlDbType.Int).Value = skip;
+                        cmd.Parameters.Add("@PageSize", SqlDbType.Int).Value = pageSize;
+
+                        SqlParameter totalRowsParam = new SqlParameter("@TotalRows", SqlDbType.Int);
+                        totalRowsParam.Direction = ParameterDirection.Output;
+                        cmd.Parameters.Add(totalRowsParam);
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(dt);
+                            totalRows = (int)totalRowsParam.Value;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return (dt, totalRows);
+        }
+        public DataTable GetArchivedProjectDocuments(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode, string DocumentDescription, Guid UserID)
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand("spGetArchivedProjectDocuments", con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@DepartmentCode", SqlDbType.NVarChar, 10).Value = DepartmentCode;
+                        cmd.Parameters.Add("@SectionCode", SqlDbType.NVarChar, 10).Value = SectionCode;
+                        cmd.Parameters.Add("@ProjectCode", SqlDbType.NVarChar, 10).Value = ProjectCode;
+                        cmd.Parameters.Add("@DocumentCategoryCode", SqlDbType.NVarChar, 10).Value = DocumentCategoryCode;
+                        cmd.Parameters.Add("@DocumentDescription", SqlDbType.NVarChar, 500).Value = DocumentDescription;
+                        cmd.Parameters.Add("@UserID", SqlDbType.UniqueIdentifier).Value = UserID;
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(dt);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dt;
+        }
+        public DataTable GetArchivedDocuments(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode, string DocumentDescription, Guid UserID)
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spGetArchivedDocuments, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@DepartmentCode", SqlDbType.NVarChar, 10).Value = DepartmentCode;
+                        cmd.Parameters.Add("@SectionCode", SqlDbType.NVarChar, 10).Value = SectionCode;
+                        cmd.Parameters.Add("@ProjectCode", SqlDbType.NVarChar, 10).Value = ProjectCode;
+                        cmd.Parameters.Add("@DocumentCategoryCode", SqlDbType.NVarChar, 10).Value = DocumentCategoryCode;
+                        cmd.Parameters.Add("@DocumentDescription", SqlDbType.NVarChar, 500).Value = DocumentDescription;
+                        cmd.Parameters.Add("@UserID", SqlDbType.UniqueIdentifier).Value = UserID;
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(dt);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dt;
+        }
         public DataTable GetDraftDocuments(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode, string DocumentDescription, Guid UserID)
         {
             DataTable dt = new DataTable();
@@ -824,6 +998,34 @@ namespace TEPL.QMS.DAL.Database.Component
                 throw ex;
             }
             return objUser;
+        }
+
+        public string GetUserEmailByID(Guid UserID)
+        {
+            string email = "";
+            DataTable dt = new DataTable();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spGetUserEmailByID, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserID", SqlDbType.UniqueIdentifier).Value = UserID;
+
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(dt);
+                            email = dt.Rows[0][0].ToString();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return email;
         }
         public List<User> GetProjectUsers(Guid ProjectTypeID, Guid ProjectID)
         {
@@ -1318,6 +1520,7 @@ namespace TEPL.QMS.DAL.Database.Component
                         cmd.Parameters.Add("@ProjectID", SqlDbType.UniqueIdentifier).Value = entObject.ID;
                         cmd.Parameters.Add("@txtName", SqlDbType.NVarChar, 100).Value = entObject.Title;
                         cmd.Parameters.Add("@flgActive", SqlDbType.Bit).Value = entObject.ProjectActive;
+                        cmd.Parameters.Add("@UserID", SqlDbType.UniqueIdentifier).Value = entObject.ModifiedID;
                         using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                         {
                             sda.Fill(dt);
@@ -1598,206 +1801,6 @@ namespace TEPL.QMS.DAL.Database.Component
                         cmd.Parameters.Add("@ProjCode", SqlDbType.NVarChar, 20).Value = projCode;
                         cmd.Parameters.Add("@DeptCode", SqlDbType.NVarChar, 5).Value = deptCode;
                         cmd.Parameters.Add("@SecCode", SqlDbType.NVarChar, 5).Value = secCode;
-                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
-                        {
-                            sda.Fill(dt);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            return dt;
-        }
-
-        public DataTable AddFunction(Function objFunc)
-        {
-            DataTable dt = new DataTable();
-            try
-            {
-                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
-                {
-                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spAddFunction, con))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@FunctionCode", SqlDbType.NVarChar, 10).Value = objFunc.Code;
-                        cmd.Parameters.Add("@FunctionName", SqlDbType.NVarChar, 100).Value = objFunc.Title;
-                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
-                        {
-                            sda.Fill(dt);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            return dt;
-        }
-        public DataTable UpdateFunction(Function objFunc)
-        {
-            DataTable dt = new DataTable();
-            try
-            {
-                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
-                {
-                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spUpdateFunction, con))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@FunctionID", SqlDbType.UniqueIdentifier).Value = objFunc.ID;
-                        cmd.Parameters.Add("@FunctionCode", SqlDbType.NVarChar, 10).Value = objFunc.Code;
-                        cmd.Parameters.Add("@FunctionName", SqlDbType.NVarChar, 100).Value = objFunc.Title;
-                        cmd.Parameters.Add("@Active", SqlDbType.Bit).Value = objFunc.Active;
-                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
-                        {
-                            sda.Fill(dt);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            return dt;
-        }
-        public DataTable DeleteFunction(Guid extDocID)
-        {
-            DataTable dt = new DataTable();
-            try
-            {
-                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
-                {
-                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spDeleteFunction, con))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@ID", SqlDbType.UniqueIdentifier).Value = extDocID;
-                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
-                        {
-                            sda.Fill(dt);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            return dt;
-        }
-        public DataTable GetFunction()
-        {
-            DataTable dt = new DataTable();
-            try
-            {
-                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
-                {
-                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spGetFunctions, con))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
-                        {
-                            sda.Fill(dt);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            return dt;
-        }
-
-        public DataTable GetLocation()
-        {
-            DataTable dt = new DataTable();
-            try
-            {
-                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
-                {
-                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spGetLocation, con))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
-                        {
-                            sda.Fill(dt);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            return dt;
-        }
-        public DataTable AddLocation(Location objLoc)
-        {
-            DataTable dt = new DataTable();
-            try
-            {
-                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
-                {
-                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spAddLocation, con))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@LocationCode", SqlDbType.NVarChar, 10).Value = objLoc.Code;
-                        cmd.Parameters.Add("@LocationName", SqlDbType.NVarChar, 100).Value = objLoc.Title;
-                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
-                        {
-                            sda.Fill(dt);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            return dt;
-        }
-        public DataTable UpdateLocation(Location objLoc)
-        {
-            DataTable dt = new DataTable();
-            try
-            {
-                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
-                {
-                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spUpdateLocation, con))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@ID", SqlDbType.UniqueIdentifier).Value = objLoc.ID;
-                        cmd.Parameters.Add("@LocationCode", SqlDbType.NVarChar, 10).Value = objLoc.Code;
-                        cmd.Parameters.Add("@LocationName", SqlDbType.NVarChar, 100).Value = objLoc.Title;
-                        cmd.Parameters.Add("@Active", SqlDbType.Bit).Value = objLoc.Active;
-                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
-                        {
-                            sda.Fill(dt);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            return dt;
-        }
-        public DataTable DeleteLocation(Guid extDocID)
-        {
-            DataTable dt = new DataTable();
-            try
-            {
-                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
-                {
-                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spDeleteLocation, con))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@ID", SqlDbType.UniqueIdentifier).Value = extDocID;
                         using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                         {
                             sda.Fill(dt);

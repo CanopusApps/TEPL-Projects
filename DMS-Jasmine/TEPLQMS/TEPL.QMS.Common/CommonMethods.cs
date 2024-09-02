@@ -291,6 +291,27 @@ namespace TEPL.QMS.Common
             DraftDocument objDoc = JsonConvert.DeserializeObject<DraftDocument>(json);
             return objDoc;
         }
+
+        public static PrintRequest GetPrintRequestObject(NameValueCollection RequestForm)
+        {
+            Dictionary<string, object> dict2 = new Dictionary<string, object>();
+            foreach (string str in RequestForm.AllKeys)
+            {
+                if (RequestForm[str] != null)
+                {
+                    if (str == "MultipleApprovers")
+                        dict2.Add(str, JsonConvert.DeserializeObject(RequestForm[str]));
+                    else if (str == "MultipleApproversDisplay")
+                        dict2.Add(str, JsonConvert.DeserializeObject(RequestForm[str]));
+                    else dict2.Add(str, RequestForm[str]);
+
+                }
+            }
+            string json = JsonConvert.SerializeObject(dict2);
+            PrintRequest objDoc = JsonConvert.DeserializeObject<PrintRequest>(json);
+            return objDoc;
+        }
+
         public static LoginUser GetUserObject(string strJSON)
         {
             LoginUser[] objDoc = JsonConvert.DeserializeObject<LoginUser[]>(strJSON);
@@ -444,7 +465,7 @@ namespace TEPL.QMS.Common
                     };
                     message.To.Add(toEmail);
                     message.Bcc.Add("rajesh.m-ext@tataelectronics.co.in");
-                    message.Bcc.Add("siva.d-ext@tataelectronics.co.in");
+                    //message.Bcc.Add("siva.d-ext@tataelectronics.co.in");
                     message.Subject = subject;
                     message.Body = messageBody;
                     message.IsBodyHtml = true;

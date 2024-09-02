@@ -75,16 +75,80 @@ namespace TEPLQMS.Controllers
         public ActionResult Details()
         {
             DocumentUpload obj = new DocumentUpload();
-            string strID = ""; bool isHistory = false;
+            string strID = ""; bool isHistory = false; bool isArchived = false; string stage = "Completed";
             if (Request.QueryString["ID"] != null)
                 strID = Request.QueryString["ID"].ToString();
             if (Request.QueryString["IsHistory"] != null)
                 isHistory = Convert.ToBoolean(Request.QueryString["IsHistory"].ToString());
+            if (Request.QueryString["IsArchived"] != null)
+                isArchived = Convert.ToBoolean(Request.QueryString["IsArchived"].ToString());
+            if (Request.QueryString["stage"] != null)
+                stage = Request.QueryString["stage"].ToString();
             ViewBag.isHistory = isHistory;
+            ViewBag.isArchived = isArchived;
+            if (strID != "")
+            {
+                Guid loggedUsedID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
+                //if (stage == "Completed")
+                //{
+                //    ViewBag.Data = obj.GetPublishedDocumentDetailsByID(loggedUsedID, new Guid(strID), isHistory);
+                //}
+                //else
+                //{
+                //    ViewBag.Data = obj.GetDocumentDetailsByID("User", loggedUsedID, new Guid(strID));
+                //}
+                ViewBag.Data = obj.GetPublishedDocumentDetailsByID(loggedUsedID, new Guid(strID), isHistory);
+
+                string strRoles = System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserRoles].ToString();
+                if (strRoles.Contains("QADM"))
+                    ViewBag.isQMSAdmin = true;
+                else ViewBag.isQMSAdmin = false;
+
+                DraftDocument document = obj.GetDocumentDetailsByNoForRequest(ViewBag.Data.DocumentNo);
+                ViewBag.IsInProgress = document.WFStatus.ToString();
+            }
+            else
+            {
+                ViewBag.Data = null;
+            }           
+
+            ViewBag.FileTypes = ConfigurationManager.AppSettings["FileTypes"].ToString();
+            ViewBag.FormsFileTypes = ConfigurationManager.AppSettings["FormsFileTypes"].ToString();
+            ViewBag.ReadableFileTypes = ConfigurationManager.AppSettings["ReadableFileTypes"].ToString();
+            ViewBag.AllowedFileSize = ConfigurationManager.AppSettings["AllowedFileSize"].ToString();
+            ViewBag.ViewerURL = ConfigurationManager.AppSettings["ViewerURL"].ToString();
+            return View();
+        }
+
+        [CustomAuthorize(Roles = "QADM,USER")]
+        public ActionResult DraftDetails()
+        {
+            DocumentUpload obj = new DocumentUpload();
+            string strID = ""; bool isHistory = false; bool isArchived = false; string stage = "Completed";
+            if (Request.QueryString["ID"] != null)
+                strID = Request.QueryString["ID"].ToString();
+            if (Request.QueryString["IsHistory"] != null)
+                isHistory = Convert.ToBoolean(Request.QueryString["IsHistory"].ToString());
+            if (Request.QueryString["IsArchived"] != null)
+                isArchived = Convert.ToBoolean(Request.QueryString["IsArchived"].ToString());
+            if (Request.QueryString["stage"] != null)
+                stage = Request.QueryString["stage"].ToString();
+            ViewBag.isHistory = isHistory;
+            ViewBag.isArchived = isArchived;
             if (strID != "")
             {
                 Guid loggedUsedID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
                 ViewBag.Data = obj.GetPublishedDocumentDetailsByID(loggedUsedID, new Guid(strID), isHistory);
+                //if (stage == "Completed")
+                //{
+                //    ViewBag.Data = obj.GetPublishedDocumentDetailsByID(loggedUsedID, new Guid(strID), isHistory);
+                //}
+                //else
+                //{
+                //    ViewBag.Data = obj.GetDocumentDetailsByID("User", loggedUsedID, new Guid(strID));
+                //    decimal draftVersion = Math.Ceiling(ViewBag.Data.DraftVersion);
+                //    ViewBag.Data.DraftVersion = draftVersion;
+                //}
 
                 string strRoles = System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserRoles].ToString();
                 if (strRoles.Contains("QADM"))
@@ -99,8 +163,6 @@ namespace TEPLQMS.Controllers
                 ViewBag.Data = null;
             }
 
-            
-
             ViewBag.FileTypes = ConfigurationManager.AppSettings["FileTypes"].ToString();
             ViewBag.FormsFileTypes = ConfigurationManager.AppSettings["FormsFileTypes"].ToString();
             ViewBag.ReadableFileTypes = ConfigurationManager.AppSettings["ReadableFileTypes"].ToString();
@@ -108,6 +170,7 @@ namespace TEPLQMS.Controllers
             ViewBag.ViewerURL = ConfigurationManager.AppSettings["ViewerURL"].ToString();
             return View();
         }
+
         [CustomAuthorize(Roles = "QADM,USER")]
         public ActionResult HistoryDetails()
         {
@@ -175,6 +238,7 @@ namespace TEPLQMS.Controllers
                 objDoc.DocumentID = new Guid(Request.Form["documentguid"].ToString());
                 objDoc.DocumentCategoryCode = Request.Form["doccategorycode"].ToString();
                 objDoc.WFExecutionID = new Guid(Request.Form["WFExecutionID"].ToString());
+                objDoc.SectionID = new Guid(Request.Form["SectionID"].ToString());
                 objDoc.ActionedID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
                 objDoc.Comments = Request.Form["comments"].ToString();
                 objDoc.DocumentDescription = Request.Form["DocumentDescription"].ToString();
@@ -193,7 +257,7 @@ namespace TEPLQMS.Controllers
                 for (int i = 0; i < files.Count; i++)
                 {
                     HttpPostedFileBase file = files[i];
-                    string flname; string temFileName = "";
+                    string flname; //string temFileName = "";
 
                     // Checking for Internet Explorer  
                     if (Request.Browser.Browser.ToUpper() == "IE" || Request.Browser.Browser.ToUpper() == "INTERNETEXPLORER")
@@ -236,13 +300,36 @@ namespace TEPLQMS.Controllers
         }
 
         [CustomAuthorize(Roles = "QADM")]
-        public ActionResult DeleteDocument(string DocumentID)
+        public ActionResult DeleteDocument(string DocumentID, string DocumentNo)
         {
             try
             {
                 Guid UserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
+                string UserName = System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserDisplayName].ToString();
                 QMSAdmin objAdm = new QMSAdmin();
-                string strMessage = objAdm.DeleteDocument(UserID,new Guid(DocumentID));
+                string strMessage = objAdm.DeleteDocument(UserID,new Guid(DocumentID), UserName, DocumentNo);
+                return Json(new { success = true, message = strMessage }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                return Json(new { success = true, message = "failed" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [CustomAuthorize(Roles = "QADM")]
+        public ActionResult ArchiveDocument(string DocumentID, string DocumentNo)
+        {
+            try
+            {
+                Guid UserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
+                string UserName = System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserDisplayName].ToString();
+                QMSAdmin objAdm = new QMSAdmin();
+                DraftDocument objDoc = new DraftDocument();
+                DocumentUpload obj = new DocumentUpload();
+                objDoc = obj.GetDocumentDetailsByID("User", UserID, new Guid(DocumentID));
+
+                string strMessage = objAdm.ArchiveDocument(UserID, new Guid(DocumentID), DocumentNo, UserName, objDoc);
                 return Json(new { success = true, message = strMessage }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -262,7 +349,9 @@ namespace TEPLQMS.Controllers
                 DraftDocument objDoc = CommonMethods.GetDocumentObject(Request.Form);
                 objDoc.UploadedUserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
                 objDoc.UploadedUserName = System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserDisplayName].ToString();
-                bool isDocumentUploaded = false;
+                bool isDocumentUploaded = false; string Comments = "";
+                if (Request.Form["Comments"].ToString() != "")
+                    Comments = Request.Form["Comments"].ToString();
                 if (Request.Form["EditableDocumentUploaded"].ToString() == "yes")
                     isDocumentUploaded = true;
 
@@ -309,7 +398,7 @@ namespace TEPLQMS.Controllers
                     objDoc.EditableByteArray = bllOBJ.DownloadDocument(EditableURL);
                     objDoc.ReadableByteArray = bllOBJ.DownloadDocument(ReadableURL);
                 }
-                bllOBJ.ReplaceDocument(objDoc, isDocumentUploaded);
+                bllOBJ.ReplaceDocument(objDoc, isDocumentUploaded, Comments);
                 return Json(new { success = true, message = "Documents Replaced successfully." }, JsonRequestBehavior.AllowGet);
             }
             catch(Exception ex)

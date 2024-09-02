@@ -56,7 +56,7 @@ namespace TEPL.QMS.Workflow.Business
         }
         public string ApproveAction(Guid WorkflowID, Guid ExecutionID, Guid WorkflowStageID, Guid NextWorkflowStageID, Guid ActionedID, string NextActionedID, string WorkflowAction, string ActionComments, string MulitpleApprovers, Guid CreatedID)
         {
-            ExecuteAction(ExecutionID, WorkflowStageID, ActionedID, WorkflowAction, ActionComments, CreatedID);
+            ExecuteAction(ExecutionID, WorkflowStageID, ActionedID, WorkflowAction, ActionComments, CreatedID, false);
             Stage objSt = GetWorkflowStage(WorkflowID, WorkflowStageID);
             CreateAction(ExecutionID, NextWorkflowStageID, NextActionedID, MulitpleApprovers, CreatedID);
             return "";
@@ -65,9 +65,19 @@ namespace TEPL.QMS.Workflow.Business
         {
             return objDALWF.CreateAction(ExecutionID, WorkflowStageID, ActionedID, MultipleApprovers, CreatedID);
         }
-        public string ExecuteAction(Guid ExecutionID, Guid WorkflowStageID, Guid ActionedID, string WorkflowAction, string ActionComments, Guid CreatedID)
+
+        public string CreateActionForPrintRequest(Guid PrintRequestID, Guid ExecutionID, Guid WorkflowStageID, string ActionedID, Guid CreatedID)
         {
-            return objDALWF.ExecuteAction(ExecutionID, WorkflowStageID, ActionedID, WorkflowAction, ActionComments, CreatedID);
+            return objDALWF.CreateActionForPrintRequest(PrintRequestID, ExecutionID, WorkflowStageID, ActionedID, CreatedID);
+        }
+        public string ExecuteAction(Guid ExecutionID, Guid WorkflowStageID, Guid ActionedID, string WorkflowAction, string ActionComments, Guid CreatedID, bool isDocumentUploaded)
+        {
+            return objDALWF.ExecuteAction(ExecutionID, WorkflowStageID, ActionedID, WorkflowAction, ActionComments, CreatedID, isDocumentUploaded);
+        }
+
+        public string ExecutePrintRequestAction(Guid ExecutionID, Guid WorkflowStageID, Guid ActionedID, string WorkflowAction, string ActionComments, Guid CreatedID)
+        {
+            return objDALWF.ExecutePrintRequestAction(ExecutionID, WorkflowStageID, ActionedID, WorkflowAction, ActionComments, CreatedID);
         }
         public DataTable GetExecutionDetails(Guid ExecutionID)
         {

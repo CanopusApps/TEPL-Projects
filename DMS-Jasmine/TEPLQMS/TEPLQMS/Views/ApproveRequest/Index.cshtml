@@ -41,6 +41,9 @@
                     <div id="divUploadedUserID">@ViewBag.Data.UploadedUserID</div>
                     <div id="divDocumentCategoryCode">@ViewBag.Data.DocumentCategoryCode</div>
                     <div id="divDocumentCategoryName">@ViewBag.Data.DocumentCategoryName</div>
+                    <div id="divDocumentLevel">@ViewBag.Data.DocumentLevel</div>
+                    <div id="divFunctionCode">@ViewBag.Data.FunctionCode</div>
+                    <div id="divFunctionName">@ViewBag.Data.FunctionName</div>
                     <div id="divDepartmentCode">@ViewBag.Data.DepartmentCode</div>
                     <div id="divDepartmentName">@ViewBag.Data.DepartmentName</div>
                     <div id="divSectionCode">@ViewBag.Data.SectionCode</div>
@@ -330,8 +333,11 @@
             fileData.append('SectionID', $("#divSectionID").text());
             fileData.append('WFExecutionID', $("#divWFExecutionID").text());
             fileData.append('WorkflowID', $("#divWorkflowID").text());
-            fileData.append('DocumentCategoryCode', $("#divDocumentCategoryCode").text());
+            fileData.append('DocumentCategoryCode', $("#divDocumentCategoryCode").text()); 
             fileData.append('DocumentCategoryName', $("#divDocumentCategoryName").text());
+            fileData.append('DocumentLevel', $("#divDocumentLevel").text());
+            fileData.append('FunctionCode', $("#divFunctionCode").text());
+            fileData.append('FunctionName', $("#divFunctionName").text());
             fileData.append('DepartmentCode', $("#divDepartmentCode").text());
             fileData.append('DepartmentName', $("#divDepartmentName").text());
             fileData.append('SectionCode', $("#divSectionCode").text());
@@ -393,7 +399,16 @@
                     if (isProceed == false) { return false; }
                 }
             }            
-            fileData.append('ReadableDocumentUploaded', isExist);            
+            fileData.append('ReadableDocumentUploaded', isExist);  
+            if (isExist == "yes") {
+                if ($("#txtComments").val().trim() == '') {
+                    $("#txtComments").addClass("manfieldredborder");
+                    $('.btn-warning').trigger('click');
+                    $('.modal-body').html('Comments mandatory when you upload the Documents');
+                    isProceed = false;
+                    return false;
+                }                       
+            }
             if (isProceed == true) {
                 $.ajax({
                     url: "/ApproveRequest/PublishDocument",
@@ -586,6 +601,7 @@
             fileData.append('WFExecutionID', $("#divWFExecutionID").text());
             fileData.append('WorkflowID', $("#divWorkflowID").text());
             fileData.append('DocumentCategoryCode', $("#divDocumentCategoryCode").text());
+            fileData.append('DocumentLevel', $("#divDocumentLevel").text());
             fileData.append('DepartmentCode', $("#divDepartmentCode").text());
             fileData.append('SectionCode', $("#divSectionCode").text());
             fileData.append('DocumentDescription', $("#DocumentDescription").val().trim());
@@ -796,6 +812,39 @@
             $("#txtComments").addClass("manfieldredborder");
             action = 'reject';
             $("#divSection1").show(); $("#divSection2").show();
+            return false;
+        });
+
+        $("#btnRejectDocument").click(function () {
+            
+            if ($("#txtComments").val() != '') {
+                $("#txtComments").removeClass("manfieldredborder");
+                bootbox.confirm("Are you sure to Reject the Request?", function (result) {
+                    if (result) {
+                        debugger;
+                        var comments = $("#txtComments").val().trim();
+                        var docguid = $("#divDocumentID").text();
+                        var CurrentStageID = $("#divCurrentStageID").text();
+                        var CurrentStage = $("#divCurrentStage").text();
+                        var exeID = $("#divWFExecutionID").text();
+                        var uplodUserID = $("#divUploadedUserID").text();
+                        var docNumber = $("#divDocumentNo").text();
+                        var docDesc = $("#divDocumentDescription").text();
+                        var DocumentName = $("#divDocumentName").text();
+                        var DraftVersion = $("#divDraftVersion").text();
+                        var EditVersion = $("#divEditVersion").text();
+                        var OriginalVersion = $("#divOriginalVersion").text();
+                        SubmitRequest(docNumber, docguid, comments, CurrentStageID, CurrentStage, exeID, uplodUserID, 'Document Rejected Successfully...',
+                            docDesc, DocumentName, DraftVersion, EditVersion, OriginalVersion);
+                    }
+                });
+            }
+            else {
+                $("#txtComments").addClass("manfieldredborder");
+                $('.btn-warning').trigger('click');
+                $('.modal-body').html('Comments is Mandatory while Rejecting...');
+            }
+
             return false;
         });
 

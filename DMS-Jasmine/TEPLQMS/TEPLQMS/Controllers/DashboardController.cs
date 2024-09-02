@@ -8,6 +8,7 @@ using TEPL.QMS.BLL.Component;
 using TEPL.QMS.Common;
 using TEPL.QMS.Common.Constants;
 using TEPL.QMS.Common.Models;
+using TEPLQMS.Common;
 
 namespace TEPLQMS.Controllers
 {
@@ -16,7 +17,7 @@ namespace TEPLQMS.Controllers
         // GET: Dashboard
         [CustomAuthorize(Roles = "USER")]
         public ActionResult Index()
-        {
+        {            
             Guid LoggedInUserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
             QMSAdmin objQMSAdmin = new QMSAdmin();
             string strRoles = System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserRoles].ToString();
@@ -26,8 +27,26 @@ namespace TEPLQMS.Controllers
 
             DocumentUpload obj = new DocumentUpload();
             ViewBag.Data = obj.GetPublishedDocuments("", "", "", "", "", LoggedInUserID,true);
+            ViewBag.UTCTIME = DateTime.UtcNow.ToString();
             return View();
         }
+
+        [CustomAuthorize(Roles = "USER")]
+        public ActionResult ServerLoad()
+        {
+            Guid LoggedInUserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
+            QMSAdmin objQMSAdmin = new QMSAdmin();
+            string strRoles = System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserRoles].ToString();
+            if (strRoles.Contains("QADM"))
+                ViewBag.isQMSAdmin = true;
+            else ViewBag.isQMSAdmin = false;
+
+            DocumentUpload obj = new DocumentUpload();
+            ViewBag.Data = obj.GetPublishedDocuments("", "", "", "", "", LoggedInUserID, true);
+            ViewBag.UTCTIME = DateTime.UtcNow.ToString();
+            return View();
+        }
+
         public ActionResult Archive()
         {
             Guid LoggedInUserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
@@ -129,7 +148,8 @@ namespace TEPLQMS.Controllers
         {
             try
             {
-                string URL = CommonMethods.CombineUrl(QMSConstants.BackUpPath,"History", folder, folderPath, fileName.Split('.')[0].ToString() + "_V" + versionNo + "." + fileName.Split('.')[1].ToString());
+                int VNo = Convert.ToInt32(versionNo);
+                string URL = CommonMethods.CombineUrl(QMSConstants.BackUpPath,"History", folder, folderPath, fileName.Split('.')[0].ToString() + "_V" + VNo + "." + fileName.Split('.')[1].ToString());
                 DocumentUpload bllOBJ = new DocumentUpload();
                 byte[] fileContent = bllOBJ.DownloadDocument(URL);
 
@@ -157,6 +177,59 @@ namespace TEPLQMS.Controllers
                 LoggerBlock.WriteTraceLog(ex);
                 return Json(new { success = true, message = "failed" }, JsonRequestBehavior.AllowGet);
             }
+        }
+
+        [HttpPost]
+        public ActionResult GetDataFromServerSide()
+        {
+            // Read parameters using the generic method
+            int draw = DatatableCall.GetRequestValue<int>("draw", Request);
+            int start = DatatableCall.GetRequestValue<int>("start", Request);
+            int length = DatatableCall.GetRequestValue<int>("length", Request);
+            string sortColumnIndex = DatatableCall.GetRequestValue<string>("order[0][column]", Request);
+            string sortColumn = DatatableCall.GetRequestValue<string>($"columns[{sortColumnIndex}][data]", Request);
+            string sortDirection = DatatableCall.GetRequestValue<string>("order[0][dir]", Request);
+            string searchValue = DatatableCall.GetRequestValue<string>("search[value]", Request);
+
+            // Filter values
+            var filters = new Dictionary<string, string>
+            {
+                { "DepartmentCode", DatatableCall.GetRequestValue < string >("department", Request) },
+                { "SectionCode", DatatableCall.GetRequestValue < string >("section", Request) },
+                { "ProjectCode", DatatableCall.GetRequestValue < string >("project", Request) },
+                { "DocumentCategoryName", DatatableCall.GetRequestValue < string >("category", Request) },
+                { "DocumentDescription", DatatableCall.GetRequestValue < string >("description", Request) }
+            };
+
+            // Get data from your data source (e.g., database)
+
+            Guid LoggedInUserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
+            QMSAdmin objQMSAdmin = new QMSAdmin();
+            string strRoles = System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserRoles].ToString();
+            if (strRoles.Contains("QADM"))
+                ViewBag.isQMSAdmin = true;
+            else ViewBag.isQMSAdmin = false;
+
+            DocumentUpload obj = new DocumentUpload();
+            (List<DraftDocument> data, int totalpage) = obj.GetNewPublishedDocuments("", "", "", "", "", LoggedInUserID, true, start, length);
+
+
+            // Apply filters, sorting, and paging
+            data = DatatableCall.ApplyFilters(data, filters).ToList();
+            data = DatatableCall.ApplySorting(data, sortColumn, sortDirection).ToList();
+            var recordsTotal = totalpage;//data.Count();
+            data = DatatableCall.ApplyPaging(data, start, length).ToList();
+
+            // Prepare the response
+            var response = new
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = data
+            };
+
+            return Json(response, JsonRequestBehavior.AllowGet);
         }
     }
 }

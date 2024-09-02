@@ -13,7 +13,9 @@ namespace TEPL.QMS.Workflow.Constants
         //Stored procedure
         public static string spWFInitiate = "spWFInitiate";
         public static string spCreateAction = "spCreateAction";
+        public static string spCreateActionForPrintRequest = "spCreateActionForPrintRequest";
         public static string spExecuteAction = "spExecuteAction";
+        public static string spExecutePrintRequestAction = "spExecutePrintRequestAction";
         public static string spGetWorkflowStage = "spGetWorkflowStage";
         public static string spGetPendingActionItems = "spGetPendingActionItems";
         public static string spGetWorkflowStages = "spGetWorkflowStages";

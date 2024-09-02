@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using TEPL.QMS.Common;
 using TEPL.QMS.Common.Constants;
 using TEPL.QMS.Common.Models;
@@ -21,9 +22,14 @@ namespace TEPL.QMS.DAL.Database.Component
         {
             try
             {
+                string spName = "";
+                if (objDoc.DocumentLevel == "Level 1")
+                    spName = QMSConstants.spGenerateDocumentNoLevel1;
+                else
+                    spName = QMSConstants.spGenerateDocumentNo;
                 using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
                 {
-                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spGenerateDocumentNo, con))
+                    using (SqlCommand cmd = new SqlCommand(spName, con))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@WorkflowID", SqlDbType.UniqueIdentifier).Value = objDoc.WorkflowID;
@@ -32,8 +38,10 @@ namespace TEPL.QMS.DAL.Database.Component
                         cmd.Parameters.Add("@DepartmentCode", SqlDbType.NVarChar, 10).Value = objDoc.DepartmentCode;
                         cmd.Parameters.Add("@SectionCode", SqlDbType.NVarChar, 10).Value = objDoc.SectionCode;
                         cmd.Parameters.Add("@ProjectCode", SqlDbType.NVarChar, 10).Value = objDoc.ProjectCode;
+                        cmd.Parameters.Add("@FunctionCode", SqlDbType.NVarChar, 10).Value = objDoc.FunctionCode;
                         cmd.Parameters.Add("@DocumentCategoryCode", SqlDbType.NVarChar, 10).Value = objDoc.DocumentCategoryCode;
                         cmd.Parameters.Add("@CreatedID", SqlDbType.UniqueIdentifier).Value = objDoc.UploadedUserID;
+                        cmd.Parameters.Add("@DocumentLevel", SqlDbType.NVarChar, 10).Value = objDoc.DocumentLevel;
 
                         var DocumentNo = cmd.Parameters.Add("@DocumentNo", SqlDbType.NVarChar, 50);
                         DocumentNo.Direction = ParameterDirection.Output;
@@ -127,7 +135,7 @@ namespace TEPL.QMS.DAL.Database.Component
             }
             return objDoc;
         }
-        public DraftDocument DocumentUpdatePublised(DraftDocument objDoc)
+        public DraftDocument DocumentUpdatePublised(DraftDocument objDoc, Boolean isDocUploaded, string Comments)
         {
             try
             {
@@ -142,6 +150,8 @@ namespace TEPL.QMS.DAL.Database.Component
                         cmd.Parameters.Add("@ReadableDocumentName", SqlDbType.NVarChar, 50).Value = objDoc.ReadableDocumentName;
                         cmd.Parameters.Add("@DocumentDescription", SqlDbType.NVarChar, 500).Value = objDoc.DocumentDescription;
                         cmd.Parameters.Add("@RevisionReason", SqlDbType.NVarChar, 500).Value = objDoc.RevisionReason;
+                        cmd.Parameters.Add("@DocsUploaded", SqlDbType.Bit).Value = isDocUploaded;
+                        cmd.Parameters.Add("@Comments", SqlDbType.NVarChar, -1).Value = Comments;
                         SqlParameter EditVersion = cmd.Parameters.Add("@EditVersion", SqlDbType.Decimal);
                         EditVersion.Precision = 18;
                         EditVersion.Scale = 3;
@@ -159,6 +169,54 @@ namespace TEPL.QMS.DAL.Database.Component
                 LoggerBlock.WriteTraceLog(ex);
             }
             return objDoc;
+        }
+
+        public string CreatePrintRequest(PrintRequest objRequest)
+        {
+            try
+            {
+                DataTable dt = new DataTable();
+                string strExecutionID = "";
+                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spCreatePrintRequest, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@DocumentID", SqlDbType.UniqueIdentifier).Value = objRequest.DocumentID;
+                        cmd.Parameters.Add("@DocumentPublishID", SqlDbType.UniqueIdentifier).Value = objRequest.DocumentPublishID;
+                        cmd.Parameters.Add("@DocumentNo", SqlDbType.NVarChar, 70).Value = objRequest.DocumentNo;
+                        cmd.Parameters.Add("@RevisionNo", SqlDbType.Int).Value = objRequest.RevisionNo;
+                        cmd.Parameters.Add("@WorkflowID", SqlDbType.UniqueIdentifier).Value = objRequest.WorkflowID;
+                        cmd.Parameters.Add("@WFStageID", SqlDbType.UniqueIdentifier).Value = objRequest.CurrentStageID;
+                        cmd.Parameters.Add("@WFStatus", SqlDbType.NVarChar, 50).Value = objRequest.Status;
+                        cmd.Parameters.Add("@PrintLocationID", SqlDbType.UniqueIdentifier).Value = objRequest.PrintLocationID;
+                        cmd.Parameters.Add("@PrintReason", SqlDbType.NVarChar, 500).Value = objRequest.PrintReason;
+                        cmd.Parameters.Add("@RequestorID", SqlDbType.UniqueIdentifier).Value = objRequest.RequestorID;
+                        cmd.Parameters.Add("@WFAction", SqlDbType.NVarChar, 50).Value = objRequest.Action;
+                        cmd.Parameters.Add("@WFActionComments", SqlDbType.NVarChar, -1).Value = objRequest.ActionComments;
+
+                        //con.Open();
+                        //cmd.ExecuteNonQuery();
+                        //con.Close();
+
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(dt);
+                        }
+
+                        if(dt != null)
+                        {
+                            strExecutionID = dt.Rows[0][0].ToString();
+                        }
+                    }
+                }
+                return strExecutionID;
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
         }
         public DraftDocument DocumentDescriptionUpdate(DraftDocument objDoc)
         {
@@ -276,6 +334,32 @@ namespace TEPL.QMS.DAL.Database.Component
             }
             return dt;
         }
+
+        public DataTable GetAllApprovedPrintRequests()
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spGetApprovedPrintRequests, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        //cmd.Parameters.Add("@CreatedID", SqlDbType.UniqueIdentifier).Value = CreatedID;
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(dt);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+            return dt;
+        }
         public string GetDocumentDetailsByID(string role, Guid loggedInUserID, Guid DocumentID)
         {
             string strReturn = string.Empty;
@@ -305,6 +389,38 @@ namespace TEPL.QMS.DAL.Database.Component
             }
             return strReturn;
         }
+
+        public string GetPrintRequestDetailsByID(string role, Guid loggedInUserID, Guid PrintRequestID)
+        {
+            string strReturn = string.Empty;
+            try
+            {
+                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
+                {
+                    con.Open();
+                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spGetPrintRequestDetailsByID, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@PrintRequestID", SqlDbType.UniqueIdentifier).Value = PrintRequestID;
+                        cmd.Parameters.Add("@Role", SqlDbType.NVarChar, 10).Value = role;
+                        cmd.Parameters.Add("@LoginUserID", SqlDbType.UniqueIdentifier).Value = loggedInUserID;
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            DataTable dt = new DataTable();
+                            sda.Fill(dt);
+                            strReturn = dt.Rows[0][0].ToString();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+            return strReturn;
+        }
+
         public string GetDocumentDetailsByNo(string DocumentNo)
         {
             string strReturn = string.Empty;
@@ -331,6 +447,35 @@ namespace TEPL.QMS.DAL.Database.Component
             }
             return strReturn;
         }
+
+        public string GetDocumentDetailsForPrintRequest(string DocumentNo)
+        {
+            string strReturn = string.Empty;
+            try
+            {
+                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spGetDocumentDetailsForPrintRequest, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@DocumentNo", SqlDbType.NVarChar, 50).Value = DocumentNo;
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            DataTable dt = new DataTable();
+                            sda.Fill(dt);
+                            strReturn = dt.Rows[0][0].ToString();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+            return strReturn;
+        }
+
         public string GetPublishedDocumentDetailsByID(Guid UserID, Guid DocumentID)
         {
             string strReturn = string.Empty;
@@ -467,21 +612,73 @@ namespace TEPL.QMS.DAL.Database.Component
             }
             return dt;
         }
-        public string UploadDocument(string StoragePath, string baseFolder, string folderPath, string filename, Decimal DocVerions, byte[] byteArray)
+
+        public DataTable GetApprovedDocuments([Optional] Guid ActionedID)
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spGetApprovedDocuments, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ActionedID", SqlDbType.UniqueIdentifier).Value = ActionedID;
+                        cmd.Parameters.Add("@siteName", SqlDbType.NVarChar, 20).Value = QMSConstants.SiteName;
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(dt);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+            return dt;
+        }
+
+        //public string UploadDocument(string StoragePath, string baseFolder, string folderPath, string filename, Decimal DocVerions, byte[] byteArray)
+        //{
+        //    try
+        //    {
+        //        string filePath = CommonMethods.CombineUrl(StoragePath, baseFolder, folderPath);
+        //        if (File.Exists(filePath + "\\" + filename))
+        //        {
+        //            BackUpFile(StoragePath, "History", baseFolder, folderPath, filename, DocVerions);
+        //        }
+        //        else if (!Directory.Exists(filePath))
+        //        {
+        //            CreateFolders(filePath);
+        //        }
+        //        string cryptFile = CommonMethods.CombineUrl(QMSConstants.StoragePath, baseFolder, folderPath, filename);
+        //        cryptFile = UploadEncryptedDocument(cryptFile, byteArray);//UploadAESEncryptedDocument(cryptFile, byteArray);
+        //        return cryptFile;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        LoggerBlock.WriteTraceLog(ex);
+        //        throw ex;
+        //    }
+        //}
+        public string UploadExternalDocument(string StoragePath, string baseFolder, string folderPath, string filename, string DocVerions, byte[] byteArray)
         {
             try
             {
                 string filePath = CommonMethods.CombineUrl(StoragePath, baseFolder, folderPath);
                 if (File.Exists(filePath + "\\" + filename))
                 {
-                    BackUpFile(StoragePath, "History", baseFolder, folderPath, filename, DocVerions);
+                    //filename = (new Guid()).ToString() + "_" + filename;
+                    BackUpFileExtDocument(StoragePath, "History", baseFolder, folderPath, filename, DocVerions);
                 }
                 else if (!Directory.Exists(filePath))
                 {
                     CreateFolders(filePath);
                 }
                 string cryptFile = CommonMethods.CombineUrl(QMSConstants.StoragePath, baseFolder, folderPath, filename);
-                cryptFile = UploadEncryptedDocument(cryptFile, byteArray);//UploadAESEncryptedDocument(cryptFile, byteArray);
+                cryptFile = UploadWOEncryptWOBackup(StoragePath,baseFolder,folderPath, filename, Convert.ToDecimal(DocVerions), byteArray);//UploadAESEncryptedDocument(cryptFile, byteArray);
                 return cryptFile;
             }
             catch (Exception ex)
@@ -490,7 +687,7 @@ namespace TEPL.QMS.DAL.Database.Component
                 throw ex;
             }
         }
-        public string UploadExternalDocument(string StoragePath, string baseFolder, string folderPath, string filename, string DocVerions, byte[] byteArray)
+        public string UploadExternalDocumentWOEncrypt(string StoragePath, string baseFolder, string folderPath, string filename, string DocVerions, byte[] byteArray)
         {
             try
             {
@@ -533,9 +730,18 @@ namespace TEPL.QMS.DAL.Database.Component
                     while (File.Exists(desFilePath + "/" + tepmFileName))
                     {
                         tepmFileName = desFileName.Replace(extn, "_V" + i + extn);
+                        i++;
                     }
+                    //if (i != 0)
+                    //    desFileName = desFileName.Replace(extn, "_V" + i + extn);
+                    //if (i == 0)
+                    //    desFileName = desFileName.Replace(extn, "_V" + i + extn);
+                    //else
+                    //    desFileName = tepmFileName;// desFileName.Replace(extn, "_V" + i + extn);
+
                     if (i != 0)
-                        desFileName = desFileName.Replace(extn, "_V" + i + extn);
+                        desFileName = tepmFileName;
+
                 }
                 File.Move(srcFilePath + "/" + srcFilename, desFilePath + "/" + desFileName);
             }
@@ -577,19 +783,20 @@ namespace TEPL.QMS.DAL.Database.Component
                 string extn = Path.GetExtension(srcFilename);
                 string Version = string.Empty;
                 Version =Math.Ceiling(DocVerions).ToString();
-                string desFileName = srcFilename.Replace(extn, "_D" + Version + extn);
+                string strDate = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                string desFileName = srcFilename.Replace(extn, "_D" + Version + "-" + strDate + extn);
                 string tepmFileName = desFileName;
                 if (!Directory.Exists(desFilePath))
                     CreateFolders(desFilePath);
                 else
                 {
-                    int i = 0;
-                    while (File.Exists(desFilePath + "\\" + tepmFileName))
-                    {
-                        tepmFileName = desFileName.Replace(extn, "_D" + i + extn);
-                    }
-                    if (i != 0)
-                        desFileName = desFileName.Replace(extn, "_D" + i + extn);
+                    //int i = 0;
+                    //while (File.Exists(desFilePath + "\\" + tepmFileName))
+                    //{
+                    //    tepmFileName = desFileName.Replace(extn, "_D" + i + extn);
+                    //}
+                    //if (i != 0)
+                    //    desFileName = desFileName.Replace(extn, "_D" + i + extn);
                 }
                 File.Move(srcFilePath + "\\" + srcFilename, desFilePath + "\\" + desFileName);
             }
@@ -604,7 +811,7 @@ namespace TEPL.QMS.DAL.Database.Component
         {
             try
             {
-                byte[] byteArray = DownloadDrecrytedDocument(DocURL, DocVersion);// DownloadAESDrecrytedDocument(DocURL, DocVersion);
+                byte[] byteArray = DownloadWithOutDecryptedDocument(DocURL, DocVersion); //DownloadDrecrytedDocument(DocURL, DocVersion);
                 return byteArray;
             }
             catch (Exception ex)
@@ -613,7 +820,6 @@ namespace TEPL.QMS.DAL.Database.Component
                 throw ex;
             }
         }
-
         public string UploadWithOutEncryptedDocument(string StoragePath, string baseFolder, string folderPath, string filename, Decimal DocVerions, byte[] byteArray)
         {
             try
@@ -624,6 +830,53 @@ namespace TEPL.QMS.DAL.Database.Component
                     BackUpFile(StoragePath, "History", baseFolder, folderPath, filename, DocVerions);
                 }
                 else if (!Directory.Exists(filePath))
+                {
+                    CreateFolders(filePath);
+                }
+                string cryptFile = CommonMethods.CombineUrl(QMSConstants.StoragePath, baseFolder, folderPath, filename);
+                FileStream fsCrypt = new FileStream(cryptFile, FileMode.Create);
+
+                try
+                {
+                    foreach (byte bt in byteArray)
+                    {
+                        fsCrypt.WriteByte(bt);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LoggerBlock.WriteTraceLog(ex);
+                    File.Delete(cryptFile);
+                    throw ex;
+                }
+                finally
+                {
+                    fsCrypt.Close();
+                }
+                return cryptFile;
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+        }
+
+        public string UploadWOEncryptWOBackup(string StoragePath, string baseFolder, string folderPath, string filename, Decimal DocVerions, byte[] byteArray)
+        {
+            try
+            {
+                string filePath = CommonMethods.CombineUrl(StoragePath, baseFolder, folderPath);
+                //if (File.Exists(filePath + "\\" + filename))
+                //{
+                //    BackUpFile(StoragePath, "History", baseFolder, folderPath, filename, DocVerions);
+                //}
+                //else if (!Directory.Exists(filePath))
+                //{
+                //    CreateFolders(filePath);
+                //}
+                
+                if (!Directory.Exists(filePath))
                 {
                     CreateFolders(filePath);
                 }

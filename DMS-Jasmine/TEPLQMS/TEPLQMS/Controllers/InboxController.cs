@@ -16,19 +16,7 @@ namespace TEPLQMS.Controllers
         // GET: Inbox
         [CustomAuthorize(Roles = "USER")]
         public ActionResult Index()
-        {
-            //DocumentUpload obj = new DocumentUpload();
-            //ViewBag.Data = obj.GetRequestedDocuments((Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID]); 
-            //ViewBag.ApprovalData = obj.GetApprovalPendingDocuments((Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID]);
-
-
-
-            //SectionsModel model = new SectionsModel();
-            //model.SectionList.Add(new SelectListItem { Text = "Physics", Value = "1" });
-            //model.SectionList.Add(new SelectListItem { Text = "Chemistry", Value = "2" });
-            //model.SectionList.Add(new SelectListItem { Text = "Mathematics", Value = "3" });
-            //ViewBag.SectionList = model.SectionList;
-            //return View(model);
+        {            
             return View();
         }
 
@@ -61,6 +49,22 @@ namespace TEPLQMS.Controllers
                 return Json(new { success = false, message = "error" }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        public ActionResult GetApprovedRequests()
+        {
+            try
+            {
+                DocumentUpload obj = new DocumentUpload();
+                var objDocs = obj.GetApprovedDocuments((Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID]);
+                return Json(new { success = true, message = objDocs }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                return Json(new { success = false, message = "error" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         public List<Requests> GetRequests()
         {
             List<Requests> lstRequests = null;

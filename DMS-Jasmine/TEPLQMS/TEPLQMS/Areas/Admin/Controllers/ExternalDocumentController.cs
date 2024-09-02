@@ -29,7 +29,7 @@ namespace TEPLQMS.Areas.Admin.Controllers
             QMSAdmin objAdm = new QMSAdmin();
             int seqNo = objAdm.GetExternalDocumentSeqNumber();
             ViewBag.SequenceNumber = seqNo;
-            ViewBag.DocumentNumber = "TEPL-EXT-" + seqNo.ToString().PadLeft(4, '0');
+            ViewBag.DocumentNumber = QMSConstants.CompanyCode + "-EXT-" + seqNo.ToString().PadLeft(4, '0');
             return View();
         }
 
@@ -124,7 +124,7 @@ namespace TEPLQMS.Areas.Admin.Controllers
             }
             catch (Exception ex)
             {
-
+                LoggerBlock.WriteTraceLog(ex);
             }
             return View();
         }
@@ -139,6 +139,7 @@ namespace TEPLQMS.Areas.Admin.Controllers
             }
             catch (Exception ex)
             {
+                LoggerBlock.WriteTraceLog(ex);
                 return Json(new { success = false, message = "error while getting data" }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -247,6 +248,7 @@ namespace TEPLQMS.Areas.Admin.Controllers
             }
             catch (Exception ex)
             {
+                LoggerBlock.WriteTraceLog(ex);
                 response = "Error while saving the External Document";
             }
 
@@ -317,6 +319,7 @@ namespace TEPLQMS.Areas.Admin.Controllers
             }
             catch (Exception ex)
             {
+                LoggerBlock.WriteTraceLog(ex);
                 response = "Error while saving the External Document";
             }
 

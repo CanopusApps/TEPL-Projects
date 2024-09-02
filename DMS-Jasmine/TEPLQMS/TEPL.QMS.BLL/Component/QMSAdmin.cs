@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,13 +18,13 @@ namespace TEPL.QMS.BLL.Component
     {
         QMSAdminDAL objAdmin = new QMSAdminDAL();
         DAL.Database.Component.DocumentOperations docOperObj = new DAL.Database.Component.DocumentOperations();
-        public List<DocumentNumbers> GetDocumentNumbers(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode)
+        public List<DocumentNumbers> GetDocumentNumbers(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode, string FunctionCode)
         {
             List<DocumentNumbers> list = new List<DocumentNumbers>();
             try
             {
                 //DataTable dt = lstOp.GetListData(SharePointConstants.siteURL, listName, SharePointConstants.mstListViewFields, SharePointConstants.mstListCondition);
-                DataTable dt = objAdmin.GetDocumentNumbers(DepartmentCode, SectionCode, ProjectCode, DocumentCategoryCode);
+                DataTable dt = objAdmin.GetDocumentNumbers(DepartmentCode, SectionCode, ProjectCode, DocumentCategoryCode, FunctionCode);
                 //dt.DefaultView.Sort = "Title ASC";
                 //dt = dt.DefaultView.ToTable();
                 for (int z = 0; z < dt.Rows.Count; z++)
@@ -38,6 +39,9 @@ namespace TEPL.QMS.BLL.Component
                     itm.ProjectName = dt.Rows[z]["ProjectName"].ToString();
                     itm.DocumentCategoryCode = dt.Rows[z]["DocumentCategoryCode"].ToString();
                     itm.DocumentCategoryName = dt.Rows[z]["DocumentCategoryName"].ToString();
+                    itm.FunctionCode = dt.Rows[z]["FunctionCode"].ToString();
+                    itm.FunctionName = dt.Rows[z]["FunctionName"].ToString();
+                    itm.DocumentLevel = dt.Rows[z]["DocumentLevel"].ToString();
                     itm.SerialNo = dt.Rows[z]["SerialNo"].ToString();
                     list.Add(itm);
                 }
@@ -173,6 +177,36 @@ namespace TEPL.QMS.BLL.Component
                     itm.ID = new Guid(dt.Rows[z]["ID"].ToString());
                     itm.Code = dt.Rows[z]["Code"].ToString();
                     itm.Title = dt.Rows[z]["Title"].ToString();
+                    if (dt.Rows[z]["HODName"] != null)
+                        itm.HODName = dt.Rows[z]["HODName"].ToString();
+                    if (!string.IsNullOrEmpty(dt.Rows[z]["HODID"].ToString()))
+                        itm.HODID = new Guid(dt.Rows[z]["HODID"].ToString());
+                    if (Convert.ToBoolean(dt.Rows[z]["IsActive"].ToString()) == true)
+                        itm.Active = true;
+                    else
+                        itm.Active = false;
+                    list.Add(itm);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+            }
+            return list;
+        }
+
+        public List<Location> GetActiveLocations()
+        {
+            List<Location> list = new List<Location>();
+            try
+            {
+                DataTable dt = objAdmin.GetActiveLocations();
+                for (int z = 0; z < dt.Rows.Count; z++)
+                {
+                    Location itm = new Location();
+                    itm.ID = new Guid(dt.Rows[z]["ID"].ToString());
+                    itm.Code = dt.Rows[z]["Code"].ToString();
+                    itm.Title = dt.Rows[z]["Name"].ToString();                    
                     if (Convert.ToBoolean(dt.Rows[z]["IsActive"].ToString()) == true)
                         itm.Active = true;
                     else
@@ -215,7 +249,105 @@ namespace TEPL.QMS.BLL.Component
             }
             return list;
         }
-        public string DeleteDocument(Guid UserID, Guid DocumentID)
+
+        public List<Function> GetActiveFunctions()
+        {
+            List<Function> list = new List<Function>();
+            try
+            {
+                DataTable dt = objAdmin.GetActiveFunctions();
+                for (int z = 0; z < dt.Rows.Count; z++)
+                {
+                    Function itm = new Function();
+                    itm.ID = new Guid(dt.Rows[z]["ID"].ToString());
+                    itm.Code = dt.Rows[z]["Code"].ToString();
+                    itm.Title = dt.Rows[z]["Title"].ToString();
+                    if (Convert.ToBoolean(dt.Rows[z]["IsActive"].ToString()) == true)
+                        itm.Active = true;
+                    else
+                        itm.Active = false;
+                    list.Add(itm);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+            }
+            return list;
+        }
+
+        public string ArchiveDocument(Guid UserID, Guid DocumentID, string DocumentNo, string UserName, DraftDocument objDoc)
+        {
+            try
+            {
+                string strReturn = string.Empty;
+
+                //Move data to publish if workflow is in pending stage
+                if (objDoc.CurrentStage != "Completed")
+                {
+                    string EditableURL = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.EditableFilePath, objDoc.EditableDocumentName);
+                    string ReadableURL = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName);
+                    DocumentUpload bllOBJ = new DocumentUpload();
+                    objDoc.EditableByteArray = bllOBJ.DownloadDocument(EditableURL);
+                    objDoc.ReadableByteArray = bllOBJ.DownloadDocument(ReadableURL);
+
+                    WorkflowActions objWF = new WorkflowActions();
+                    docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDoc.EditableFilePath, objDoc.EditableDocumentName, objDoc.EditVersion, objDoc.EditableByteArray);
+                    docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName, objDoc.EditVersion, objDoc.ReadableByteArray);
+                    docOperObj.DocumentPublish(objDoc);
+                }
+
+                DataSet ds = new DataSet();
+                ds = objAdmin.ArchiveDocument(UserID, DocumentID, DocumentNo);
+                string DeptHODEmail = ds.Tables[0].Rows[0][0].ToString();
+                string QMSHead = QMSConstants.QMSHeadEmail.ToString();
+
+                //Send email to QMS Head & Department HOD
+                string subject = DocumentNo + " - " + " Document Archived from the system by " +  UserName;
+                string message = "Document with the number " + DocumentNo + " has been Archived from the System by " + UserName + ". Now this document available in Archived Documents section in the system. <br/>";
+                message += "Please review the document and delete from the system if not required.";
+                PrepareandSendMail(DeptHODEmail + "," + QMSHead, subject, message);
+
+                strReturn = "Document Archived Successfully";
+                return strReturn;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private string GetApprovalMailTempate()
+        {
+            string strMailtemplate = string.Empty;
+            QMSAdminDAL objADM = new QMSAdminDAL();
+            strMailtemplate = objADM.GetConfigValue("ApprovalMailTemplate");
+            return strMailtemplate;
+        }
+
+        private void PrepareandSendMail(string emailIDs, string subject, string mainMessage)
+        {
+            try
+            {
+                StringBuilder body = new StringBuilder();
+                body.Append("Dear User,");
+                body.Append("<br/><br/>");
+                body.Append(mainMessage);
+                body.Append("<br/><br/>");
+                //if (blAppLink)
+                //    body.Append("Link: <a style='text-decoration:underline' target='_blank' href='" + QMSConstants.WebSiteURL + pageName + "?ID= " + docObj.DocumentID + "'>" + "Click here" + "</a>");
+
+                string strMailTemplate = GetApprovalMailTempate();
+                strMailTemplate = strMailTemplate.Replace("@@MailBody@@", body.ToString());
+                CommonMethods.SendMail(emailIDs, subject, strMailTemplate);
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+            }
+        }
+
+        public string DeleteDocument_Old(Guid UserID, Guid DocumentID)
         {
             try
             {
@@ -256,6 +388,118 @@ namespace TEPL.QMS.BLL.Component
                 throw ex;
             }
         }
+
+        public string DeleteDocument(Guid UserID, Guid DocumentID, string UserName, string DocumentNo)
+        {
+            try
+            {
+                string strReturn = string.Empty;
+                DataSet ds = new DataSet();
+                ds = objAdmin.DeleteDocument(UserID, DocumentID);
+                DocumentOperations docOper = new DocumentOperations();
+                if (!string.IsNullOrEmpty(ds.Tables[0].Rows[0][0].ToString()))
+                {
+                    string json = ds.Tables[0].Rows[0][0].ToString();
+                    List<DraftDocument> objDraftDoc = BindModels.ConvertJSON<DraftDocument>(json);
+
+                    docOper.DeleteFile(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDraftDoc[0].EditableFilePath, objDraftDoc[0].EditableDocumentName, objDraftDoc[0].DraftVersion);
+                    docOper.DeleteFile(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDraftDoc[0].ReadableFilePath, objDraftDoc[0].ReadableDocumentName, objDraftDoc[0].DraftVersion);
+                    //need to write logic to delete from archive folders.
+                    if (!string.IsNullOrEmpty(ds.Tables[1].Rows[0][0].ToString()))
+                    {
+                        json = ds.Tables[1].Rows[0][0].ToString();
+                        objDraftDoc = BindModels.ConvertJSON<DraftDocument>(json);
+                        docOper.DeleteFile(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDraftDoc[0].EditableFilePath, objDraftDoc[0].EditableDocumentName, objDraftDoc[0].OriginalVersion);
+                        docOper.DeleteFile(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDraftDoc[0].ReadableFilePath, objDraftDoc[0].ReadableDocumentName, objDraftDoc[0].OriginalVersion);
+                        //need to write logic to delete from archive folders.
+                        strReturn = "Document deleted successfully";
+                    }
+                    else
+                    {
+                        strReturn = "Document present in draft stage only and deleted successfully";
+                    }
+
+                    if (ds.Tables[6].Rows.Count > 0)
+                    {
+                        // Iterate over each DataRow in the DataTable
+                        foreach (DataRow row in ds.Tables[6].Rows)
+                        {
+                            // Retrieve the original version and calculate the ceiling value
+                            decimal originalVersion = Convert.ToDecimal(row["OriginalVersion"]);
+                            string version = Math.Ceiling(originalVersion).ToString();
+
+                            // Retrieve file path and document name
+                            string filePath = row["txtEditableFilePath"].ToString();
+                            string documentName = row["txtEditableDocumentName"].ToString();
+                            string fileExtension = Path.GetExtension(documentName);
+
+                            // Construct the new document name with the version appended
+                            string newDocumentName = documentName.Replace(fileExtension, $"_V{version}{fileExtension}");
+
+                            // Perform the file deletion operation for the main document
+                            docOper.DeleteFile(
+                                Path.Combine(QMSConstants.BackUpPath),
+                                Path.Combine(QMSConstants.HistoryBackUpPath, QMSConstants.PublishedFolder),
+                                filePath,
+                                newDocumentName,
+                                originalVersion
+                            );
+
+                            // Retrieve the readable file path and document name
+                            string readableFilePath = row["txtReadableFilePath"].ToString();
+                            string readableDocumentName = row["txtReadableDocumentName"].ToString();
+                            string newReadableExtension = Path.GetExtension(readableDocumentName);
+
+                            // Construct the new readable document name with the version appended
+                            string newReadableDocumentName = readableDocumentName.Replace(newReadableExtension, $"_V{version}{newReadableExtension}");
+
+                            // Perform the file deletion operation for the readable document
+                            docOper.DeleteFile(
+                                Path.Combine(QMSConstants.BackUpPath),
+                                Path.Combine(QMSConstants.HistoryBackUpPath, QMSConstants.PublishedFolder),
+                                readableFilePath,
+                                newReadableDocumentName,
+                                originalVersion
+                            );
+                        }
+                        // Return success message
+                        strReturn = "Documents deleted successfully";
+                    }
+                    else
+                    {
+                        strReturn = "Documents deleted successfully";
+                    }
+
+                    //Send email to QMS Head & Department HOD
+                    string QMSHead = QMSConstants.QMSHeadEmail.ToString();
+                    string DeptHODEmail = "";
+                    try
+                    {
+                        DeptHODEmail = ds.Tables[9].Rows[0][0].ToString();
+                    }
+                    catch
+                    {
+
+                    }
+                    string subject = DocumentNo + " - " + " Document Deleted permanently from the system by " + UserName;
+                    string message = "Document with the number " + DocumentNo + " has been Deleted from the System by " + UserName + ". Now this document no more available in the system. <br/>";
+                    //message += "Please review the document and delete from the system if not required.";
+                    PrepareandSendMail(DeptHODEmail + "," + QMSHead, subject, message);
+
+                }
+                else
+                {
+                    strReturn = "Document not found to delete";
+                }
+                return strReturn;
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+        }
+
         public List<Sections> GetSections()
         {
             List<Sections> list = new List<Sections>();
@@ -348,6 +592,12 @@ namespace TEPL.QMS.BLL.Component
             }
             return objUser;
         }
+
+        public string GetUserEmailByID(Guid UploadedUserID)
+        {
+            return objAdmin.GetUserEmailByID(UploadedUserID);
+        }
+
         public List<User> GetProjectUsers(Guid ProjectTypeID, Guid ProjectID)
         {
             List<User> objUsers = null;
@@ -1266,152 +1516,5 @@ namespace TEPL.QMS.BLL.Component
             }
             return strReturn;
         }
-
-        public string AddFunction(Function objFunc)
-        {
-            string strReturn = string.Empty;
-            try
-            {
-                DataTable dt = objAdmin.AddFunction(objFunc);
-                if (dt.Rows.Count > 0)
-                    strReturn = dt.Rows[0][0].ToString();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            return strReturn;
-        }
-        public string UpdateFunction(Function objFunc)
-        {
-            string strReturn = string.Empty;
-            try
-            {
-                DataTable dt = objAdmin.UpdateFunction(objFunc);
-                if (dt.Rows.Count > 0)
-                    strReturn = dt.Rows[0][0].ToString();
-            }
-            catch (Exception ex)
-            {
-                LoggerBlock.WriteTraceLog(ex);
-                throw ex;
-            }
-            return strReturn;
-        }
-        public string DeleteFunction(Guid id)
-        {
-            string strReturn = string.Empty;
-            try
-            {
-                DataTable dt = objAdmin.DeleteFunction(id);
-                if (dt.Rows.Count > 0)
-                    strReturn = dt.Rows[0][0].ToString();
-            }
-            catch (Exception ex)
-            {
-                LoggerBlock.WriteTraceLog(ex);
-                throw ex;
-            }
-            return strReturn;
-        }
-        public List<Function> GetFunction()
-        {
-            List<Function> list = new List<Function>();
-            try
-            {
-                DataTable dt = objAdmin.GetFunction();
-                for (int z = 0; z < dt.Rows.Count; z++)
-                {
-                    Function itm = new Function();
-                    itm.ID = new Guid(dt.Rows[z]["ID"].ToString());
-                    itm.Code = dt.Rows[z]["Code"].ToString();
-                    itm.Title = dt.Rows[z]["Title"].ToString();
-                    if (Convert.ToBoolean(dt.Rows[z]["IsActive"].ToString()) == true)
-                        itm.Active = true;
-                    else
-                        itm.Active = false;
-                    list.Add(itm);
-                }
-            }
-            catch (Exception ex)
-            {
-                LoggerBlock.WriteTraceLog(ex);
-            }
-            return list;
-        }
-
-        public List<Location> GetLocation()
-        {
-            List<Location> list = new List<Location>();
-            try
-            {
-                DataTable dt = objAdmin.GetLocation();
-                for (int z = 0; z < dt.Rows.Count; z++)
-                {
-                    Location itm = new Location();
-                    itm.ID = new Guid(dt.Rows[z]["ID"].ToString());
-                    itm.Code = dt.Rows[z]["Code"].ToString();
-                    itm.Title = dt.Rows[z]["Title"].ToString();
-                    if (Convert.ToBoolean(dt.Rows[z]["IsActive"].ToString()) == true)
-                        itm.Active = true;
-                    else
-                        itm.Active = false;
-                    list.Add(itm);
-                }
-            }
-            catch (Exception ex)
-            {
-                LoggerBlock.WriteTraceLog(ex);
-            }
-            return list;
-        }
-        public string AddLocation(Location objLoc)
-        {
-            string strReturn = string.Empty;
-            try
-            {
-                DataTable dt = objAdmin.AddLocation(objLoc);
-                if (dt.Rows.Count > 0)
-                    strReturn = dt.Rows[0][0].ToString();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            return strReturn;
-        }
-        public string UpdateLocation(Location objLoc)
-        {
-            string strReturn = string.Empty;
-            try
-            {
-                DataTable dt = objAdmin.UpdateLocation(objLoc);
-                if (dt.Rows.Count > 0)
-                    strReturn = dt.Rows[0][0].ToString();
-            }
-            catch (Exception ex)
-            {
-                LoggerBlock.WriteTraceLog(ex);
-                throw ex;
-            }
-            return strReturn;
-        }
-        public string DeleteLocation(Guid id)
-        {
-            string strReturn = string.Empty;
-            try
-            {
-                DataTable dt = objAdmin.DeleteLocation(id);
-                if (dt.Rows.Count > 0)
-                    strReturn = dt.Rows[0][0].ToString();
-            }
-            catch (Exception ex)
-            {
-                LoggerBlock.WriteTraceLog(ex);
-                throw ex;
-            }
-            return strReturn;
-        }
-
     }
 }

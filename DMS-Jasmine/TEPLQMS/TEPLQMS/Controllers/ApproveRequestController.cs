@@ -1,4 +1,8 @@
-﻿using System;
+﻿using PdfSharp.Drawing.Layout;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf.IO;
+using PdfSharp.Pdf;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -9,6 +13,7 @@ using TEPL.QMS.BLL.Component;
 using TEPL.QMS.Common;
 using TEPL.QMS.Common.Constants;
 using TEPL.QMS.Common.Models;
+
 
 namespace TEPLQMS.Controllers
 {
@@ -45,6 +50,12 @@ namespace TEPLQMS.Controllers
             ViewBag.ReadableFileTypes = ConfigurationManager.AppSettings["ReadableFileTypes"].ToString();
             ViewBag.AllowedFileSize = ConfigurationManager.AppSettings["AllowedFileSize"].ToString();
             ViewBag.ViewerURL = ConfigurationManager.AppSettings["ViewerURL"].ToString();
+            return View();
+        }
+
+        public ActionResult ViewDocument()
+        {
+            
             return View();
         }
 
@@ -90,6 +101,8 @@ namespace TEPLQMS.Controllers
             }
         }
 
+        
+
         [HttpPost]
         public ActionResult ApproveDocument()
         {
@@ -107,7 +120,7 @@ namespace TEPLQMS.Controllers
                 for (int i = 0; i < files.Count; i++)
                 {
                     HttpPostedFileBase file = files[i];
-                    string flname; string temFileName = "";
+                    string flname; //string temFileName = "";
 
                     // Checking for Internet Explorer  
                     if (Request.Browser.Browser.ToUpper() == "IE" || Request.Browser.Browser.ToUpper() == "INTERNETEXPLORER")
@@ -138,6 +151,7 @@ namespace TEPLQMS.Controllers
                 //MultipleApprovers = "{\"DocumentReviewers\":\"E86E0C22-6419-4CAD-941A-BC69E99030E4,EB9523FD-B564-426C-A2B9-53B16522073B\",\"DocumentApprovers\":\"A6E1B539-A1E1-4275-B3E5-D64F967A07AB,5E9D535F-2AC4-430F-9624-ECEE3F789512\"}";
                 DocumentUpload bllOBJ = new DocumentUpload();
                 bool IsMultiApproversChanged = Convert.ToBoolean(Request.Form["IsMultiApproversChanged"].ToString());
+                
                 result = bllOBJ.ApproveDocument(objDoc, isDocumentUploaded, IsMultiApproversChanged);
             }
             catch (Exception ex)
@@ -147,7 +161,7 @@ namespace TEPLQMS.Controllers
                 //throw ex;
             }
             return Json(new { success = status, message = result }, JsonRequestBehavior.AllowGet);
-        }
+        }        
 
         [HttpPost]
         public ActionResult PublishDocument()
@@ -220,7 +234,8 @@ namespace TEPLQMS.Controllers
                     }
                     objDoc.EditableByteArray = bllOBJ.DownloadDocument(EditableURL);
                     objDoc.ReadableByteArray = bllOBJ.DownloadDocument(ReadableURL);
-                }
+                }                
+
                 bllOBJ.DocumentPublish(objDoc, isDocumentUploaded);
                 result = "sucess";
             }
@@ -291,6 +306,7 @@ namespace TEPLQMS.Controllers
             }
             catch (Exception ex)
             {
+                LoggerBlock.WriteTraceLog(ex);
                 response = "error";
             }
             return Json(new { success = true, message = response }, JsonRequestBehavior.AllowGet);

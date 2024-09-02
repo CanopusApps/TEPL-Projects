@@ -32,6 +32,9 @@ namespace TEPL.QMS.Common.Models
         public Guid DocumentCategoryID { get; set; }
         public string DocumentCategoryCode { get; set; }
         public string DocumentCategoryName { get; set; }
+        public Guid FunctionID { get; set; }
+        public string FunctionCode { get; set; }
+        public string FunctionName { get; set; }
         public string EditableDocumentName { get; set; }
         public string EditableFilePath { get; set; }
         public byte[] EditableByteArray { get; set; }
@@ -55,13 +58,21 @@ namespace TEPL.QMS.Common.Models
         public Guid UploadedUserID { get; set; }
         public string UploadedUserName { get; set; }
         public DateTime? CreatedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
         public string PublishedOn { get; set; }
         public Guid CurrentStageID { get; set; }
         public string CurrentStage { get; set; }
         public string WFStatus { get; set; }
         public int PendingDays { get; set; }
 
+        public bool IsArchived { get; set; }
+        public Guid ArchivedUserID { get; set; }
+        public string ArchivedUserName { get; set; }
+        public string ArchivedDate { get; set; }
+
         public List<WorkflowStages> WorkflowStages;
+
+        public string RequestType { get; set; }
     }
 
     public class WorkflowStages

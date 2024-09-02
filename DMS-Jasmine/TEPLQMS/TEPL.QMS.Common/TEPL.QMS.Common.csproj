@@ -83,9 +83,6 @@
     </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Diagnostics.DiagnosticSource, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.5.0.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
-    </Reference>
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.DirectoryServices.AccountManagement" />
     <Reference Include="System.Drawing" />
@@ -120,11 +117,12 @@
     <Compile Include="FileConvert.cs" />
     <Compile Include="LoggerBlock.cs" />
     <Compile Include="MailSend.cs" />
+    <Compile Include="Models\PrintRequest.cs" />
+    <Compile Include="Models\Location.cs" />
+    <Compile Include="Models\Function.cs" />
     <Compile Include="Models\ExternalSubCategory.cs" />
     <Compile Include="Models\ExternalCategory.cs" />
     <Compile Include="Models\ExternalDocument.cs" />
-    <Compile Include="Models\Function.cs" />
-    <Compile Include="Models\Location.cs" />
     <Compile Include="Models\MultipleApproversDisplay.cs" />
     <Compile Include="Models\MultipleApprovers.cs" />
     <Compile Include="Models\Departments.cs" />

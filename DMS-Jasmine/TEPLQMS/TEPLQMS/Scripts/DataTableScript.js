@@ -293,7 +293,8 @@ var InitiateInboxDataTable = function () {
                     { "bVisible": false },
                     { "bVisible": false },
                     null,
-                    null,                    
+                    null,        
+                    null,
                     null,
                     null,
                     null,
@@ -431,89 +432,58 @@ var InitiateApproverInboxDataTable = function () {
                     null,
                     null,
                     null,
+                    null,
                     { "bSortable": false }
                 ]
-            });
+            });            
+        }
+    };
+}();
 
-            var isEditing = null;
-
-            //Delete an Existing Row
-            $('#editabledatatableApprover').on("click", 'a.delete', function (e) {
-                e.preventDefault();
-                var nRow = $(this).parents('tr')[0];
-                var aData = oTable.fnGetData(nRow);
-                var id = aData[0];
-                bootbox.confirm("Are you sure to Delete?", function (result) {
-                    if (result) {
-                        oTable.fnDeleteRow(nRow);
-                        DeleteEntityItem(id, "/AppUser/DeleteEntity", "User");
+var InitiateApprovedInboxDataTable = function () {
+    return {
+        init: function () {
+            var oTable = $('#editabledatatableApprovedItems').dataTable({
+                "aLengthMenu": [
+                    [5, 10, 20, 100, -1],
+                    [5, 10, 20, 100, "All"]
+                ],
+                "iDisplayLength": 10,
+                "sPaginationType": "bootstrap",
+                "sDom": "Tflt<'row DTTTFooter'<'col-sm-6'i><'col-sm-6'p>>",
+                "oTableTools": {
+                    "aButtons": [
+                        //"copy",
+                        //"print",                           
+                        //{
+                        //    "sExtends": "collection",
+                        //    "sButtonText": "Save <i class=\"fa fa-angle-down\"></i>",
+                        //    "aButtons": ["csv", "xls", "pdf"]
+                        //}
+                    ],
+                    "sSwfPath": "assets/swf/copy_csv_xls_pdf.swf"
+                },
+                "language": {
+                    "search": "",
+                    "sLengthMenu": "_MENU_",
+                    "oPaginate": {
+                        "sPrevious": "Prev",
+                        "sNext": "Next"
                     }
-                });
-                return false;
-            });
-
-            //Edit A Row
-            $('#editabledatatableApprover').on("click", 'a.edit', function (e) {
-                e.preventDefault();
-                var nRow = $(this).parents('tr')[0];
-                var aData = oTable.fnGetData(nRow);
-                var entID = aData[0];
-                $("#divnew").show();
-                $(".topfocus").focus().css('border', '');//To be visible (scroll to top) the edit section by default
-                $("#btnUpdate").show();
-                $("#btnCreate").hide();
-                //Get the data for the ID and bind it to controls
-                if (entID != "") {
-                    $.ajax({
-                        url: "/AppUser/GetDataForMasterID",
-                        dataType: "json",
-                        type: "POST",
-                        beforeSend: ShowProgressBar(),
-                        complete: HideProgressBar(),
-                        contentType: 'application/json; charset=utf-8',
-                        cache: false,
-                        data: JSON.stringify({ id: entID }),
-                        success: function (data) {
-                            retmsg = data.message;
-                            if (retmsg == '') {
-                                $('.btn-danger').trigger('click');
-                                $('.modal-body').html('Error while getting the data.');
-                            }
-                            else {
-                                //alert(retmsg[1]);
-                                $("#divID").html(retmsg.ID);
-                                $("#txt1").val(retmsg.FirstName);
-                                $("#txt2").val(retmsg.LastName);
-                                $("#txt3").val(retmsg.Email);
-                                $("#txt4").val(retmsg.Mobile);
-
-                                //var dat = new Date(1501439400000);
-                                //alert(dat);
-                                //$('#id-date-picker-1').datepicker('setValue', dat);
-                                //alert(ToJavaScriptDate(retmsg.DOB));
-                                if (retmsg.DOB != null && retmsg.DOB != "")
-                                    $('#date1').datepicker('setValue', ToJavaScriptDate(retmsg.DOB));
-
-                                $("#ddlMultiple").multipleSelect("setSelects", data.success);
-
-                                if (retmsg.Gender == "Male")
-                                    $("#rbn1").prop("checked", true);
-                                else
-                                    $("#rbn2").prop("checked", true);
-
-                                if (retmsg.IsActive == true)
-                                    $("#chk1").prop('checked', true);//.attr("checked", true);
-                                else
-                                    $("#chk1").prop('checked', false);//.removeAttr("checked");
-                            }
-                        },
-                        error: function (xhr) {
-                            $('.btn-danger').trigger('click');
-                            $('.modal-body').html('Error while getting the data.');
-                        }
-                    });
-                }
-
+                },
+                "aoColumns": [
+                    { "bVisible": false },
+                    { "bVisible": false },
+                    null,
+                    null,
+                    null,                    
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    { "bSortable": false }
+                ]
             });
         }
     };
@@ -615,92 +585,59 @@ var InitiateWFHistoryDataTable = function () {
                     { "bSortable": false }
                 ]
             });
-
-            var isEditing = null;
-
-            //Delete an Existing Row
-            $('#editabledatatable').on("click", 'a.delete', function (e) {
-                e.preventDefault();
-                var nRow = $(this).parents('tr')[0];
-                var aData = oTable.fnGetData(nRow);
-                var id = aData[0];
-                bootbox.confirm("Are you sure to Delete?", function (result) {
-                    if (result) {
-                        oTable.fnDeleteRow(nRow);
-                        DeleteEntityItem(id, "/AppUser/DeleteEntity", "User");
-                    }
-                });
-                return false;
-            });
-
-            //Edit A Row
-            $('#editabledatatable').on("click", 'a.edit', function (e) {
-                e.preventDefault();
-                var nRow = $(this).parents('tr')[0];
-                var aData = oTable.fnGetData(nRow);
-                var entID = aData[0];
-                $("#divnew").show();
-                $(".topfocus").focus().css('border', '');//To be visible (scroll to top) the edit section by default
-                $("#btnUpdate").show();
-                $("#btnCreate").hide();
-                //Get the data for the ID and bind it to controls
-                if (entID != "") {
-                    $.ajax({
-                        url: "/AppUser/GetDataForMasterID",
-                        dataType: "json",
-                        type: "POST",
-                        beforeSend: ShowProgressBar(),
-                        complete: HideProgressBar(),
-                        contentType: 'application/json; charset=utf-8',
-                        cache: false,
-                        data: JSON.stringify({ id: entID }),
-                        success: function (data) {
-                            retmsg = data.message;
-                            if (retmsg == '') {
-                                $('.btn-danger').trigger('click');
-                                $('.modal-body').html('Error while getting the data.');
-                            }
-                            else {
-                                //alert(retmsg[1]);
-                                $("#divID").html(retmsg.ID);
-                                $("#txt1").val(retmsg.FirstName);
-                                $("#txt2").val(retmsg.LastName);
-                                $("#txt3").val(retmsg.Email);
-                                $("#txt4").val(retmsg.Mobile);
-
-                                //var dat = new Date(1501439400000);
-                                //alert(dat);
-                                //$('#id-date-picker-1').datepicker('setValue', dat);
-                                //alert(ToJavaScriptDate(retmsg.DOB));
-                                if (retmsg.DOB != null && retmsg.DOB != "")
-                                    $('#date1').datepicker('setValue', ToJavaScriptDate(retmsg.DOB));
-
-                                $("#ddlMultiple").multipleSelect("setSelects", data.success);
-
-                                if (retmsg.Gender == "Male")
-                                    $("#rbn1").prop("checked", true);
-                                else
-                                    $("#rbn2").prop("checked", true);
-
-                                if (retmsg.IsActive == true)
-                                    $("#chk1").prop('checked', true);//.attr("checked", true);
-                                else
-                                    $("#chk1").prop('checked', false);//.removeAttr("checked");
-                            }
-                        },
-                        error: function (xhr) {
-                            $('.btn-danger').trigger('click');
-                            $('.modal-body').html('Error while getting the data.');
-                        }
-                    });
-                }
-
-            });
+                        
         }
     };
 }();
 
 
+var InitiatePrintWFHistoryDataTable = function () {
+    return {
+        init: function () {
+            //Datatable Initiating
+            var oTable = $('#editabledatatable').dataTable({
+                "aLengthMenu": [
+                    [5, 10, 20, 100, -1],
+                    [5, 10, 20, 100, "All"]
+                ],
+                "iDisplayLength": 20,
+                "sPaginationType": "bootstrap",
+                "sDom": "Tflt<'row DTTTFooter'<'col-sm-6'i><'col-sm-6'p>>",
+                "oTableTools": {
+                    "aButtons": [
+                        //"copy",
+                        //"print",                           
+                        //{
+                        //    "sExtends": "collection",
+                        //    "sButtonText": "Save <i class=\"fa fa-angle-down\"></i>",
+                        //    "aButtons": ["csv", "xls", "pdf"]
+                        //}
+                    ],
+                    "sSwfPath": "assets/swf/copy_csv_xls_pdf.swf"
+                },
+                "language": {
+                    "search": "",
+                    "sLengthMenu": "_MENU_",
+                    "oPaginate": {
+                        "sPrevious": "Prev",
+                        "sNext": "Next"
+                    }
+                },
+                "aoColumns": [
+                    { "bVisible": false },
+                    { "bVisible": false },
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    { "bSortable": false }
+                ]
+            });
+
+        }
+    };
+}();
 var InitiateEditableUserDataTable = function () {
     return {
         init: function () {
@@ -1150,6 +1087,56 @@ var InitiatePublishedDataTable = function () {
     };
 }();
 
+var InitiateArchivedDocsDataTable = function () {
+    return {
+        init: function () {
+            //Datatable Initiating
+            var oTable = $('#editabledatatable').dataTable({
+                "aLengthMenu": [
+                    [5, 10, 20, 100, -1],
+                    [5, 10, 20, 100, "All"]
+                ],
+                "iDisplayLength": 10,
+                "sPaginationType": "bootstrap",
+                "sDom": "Tflt<'row DTTTFooter'<'col-sm-6'i><'col-sm-6'p>>",
+                "oTableTools": {
+                    "aButtons": [
+                        //"copy",
+                        //"print",                           
+                        //{
+                        //    "sExtends": "collection",
+                        //    "sButtonText": "Save <i class=\"fa fa-angle-down\"></i>",
+                        //    "aButtons": ["csv", "xls", "pdf"]
+                        //}
+                    ],
+                    "sSwfPath": "assets/swf/copy_csv_xls_pdf.swf"
+                },
+                "language": {
+                    "search": "",
+                    "sLengthMenu": "_MENU_",
+                    "oPaginate": {
+                        "sPrevious": "Prev",
+                        "sNext": "Next"
+                    }
+                },
+                "aoColumns": [
+                    { "bVisible": false },
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                ]
+            });
+        }
+    };
+}();
+
 var InitiatePendingDataTable = function () {
     return {
         init: function () {
@@ -1233,7 +1220,6 @@ var InitiateArchivalProjectDataTable = function () {
                 },
                 "aoColumns": [
                     { "bVisible": false },
-                    null,
                     null,
                     null,
                     null,
@@ -1375,9 +1361,7 @@ var InitiateDocumentNoDataTable = function () {
                 "aoColumns": [
                     { "bVisible": false },
                     null,
-                    null,
-                    null,
-                    null,
+                    null,                    
                     null,
                     null,
                     null,
@@ -1395,10 +1379,10 @@ var InitiateDepartmentDataTable = function () {
             //Datatable Initiating
             var oTable = $('#editabledatatable').dataTable({
                 "aLengthMenu": [
-                    [5, 10, 20, 100, -1],
-                    [5, 10, 20, 100, "All"]
+                    [10, 15, 20, 100, -1],
+                    [10, 15, 20, 100, "All"]
                 ],
-                "iDisplayLength": 10,
+                "iDisplayLength": 15,
                 "sPaginationType": "bootstrap",
                 "sDom": "Tflt<'row DTTTFooter'<'col-sm-6'i><'col-sm-6'p>>",
                 "oTableTools": {
@@ -1426,6 +1410,7 @@ var InitiateDepartmentDataTable = function () {
                     null,
                     null,
                     null,
+                    null,
                     { "bSortable": false }
                 ]
             });
@@ -1439,10 +1424,10 @@ var InitiateSectionDataTable = function () {
             //Datatable Initiating
             var oTable = $('#editabledatatable').dataTable({
                 "aLengthMenu": [
-                    [5, 10, 20, 100, -1],
-                    [5, 10, 20, 100, "All"]
+                    [10, 15, 20, 100, -1],
+                    [10, 15, 20, 100, "All"]
                 ],
-                "iDisplayLength": 10,
+                "iDisplayLength": 15,
                 "sPaginationType": "bootstrap",
                 "sDom": "Tflt<'row DTTTFooter'<'col-sm-6'i><'col-sm-6'p>>",
                 "oTableTools": {
@@ -1554,10 +1539,10 @@ var InitiateCategoryDataTable = function () {
             //Datatable Initiating
             var oTable = $('#editabledatatable').dataTable({
                 "aLengthMenu": [
-                    [5, 10, 20, 100, -1],
-                    [5, 10, 20, 100, "All"]
+                    [10, 15, 20, 100, -1],
+                    [10, 15, 20, 100, "All"]
                 ],
-                "iDisplayLength": 10,
+                "iDisplayLength": 15,
                 "sPaginationType": "bootstrap",
                 "sDom": "Tflt<'row DTTTFooter'<'col-sm-6'i><'col-sm-6'p>>",
                 "oTableTools": {
@@ -2373,7 +2358,6 @@ var InitiateDocHistoryDataTable = function () {
                     null,
                     null,
                     null,
-                    null,
                     null
                 ]
             });
@@ -2545,87 +2529,6 @@ var InitiateExtSubCategoryDataTable = function () {
                         //    "sButtonText": "Save <i class=\"fa fa-angle-down\"></i>",
                         //    "aButtons": ["csv", "xls", "pdf"]
                         //}
-                    ],
-                    "sSwfPath": "assets/swf/copy_csv_xls_pdf.swf"
-                },
-                "language": {
-                    "search": "",
-                    "sLengthMenu": "_MENU_",
-                    "oPaginate": {
-                        "sPrevious": "Prev",
-                        "sNext": "Next"
-                    }
-                },
-                "aoColumns": [
-                    { "bVisible": false },
-                    null,
-                    null,
-                    null,
-                    { "bSortable": false }
-                ]
-            });
-        }
-    };
-}();
-
-var InitiateFunctionDataTable = function () {
-    return {
-        init: function () {
-            //Datatable Initiating
-            var oTable = $('#editabledatatable').dataTable({
-                "aLengthMenu": [
-                    [10, 15, 20, 100, -1],
-                    [10, 15, 20, 100, "All"]
-                ],
-                "iDisplayLength": 15,
-                "sPaginationType": "bootstrap",
-                "sDom": "Tflt<'row DTTTFooter'<'col-sm-6'i><'col-sm-6'p>>",
-                "oTableTools": {
-                    "aButtons": [
-                        //"copy",
-                        //"print",                           
-                        //{
-                        //    "sExtends": "collection",
-                        //    "sButtonText": "Save <i class=\"fa fa-angle-down\"></i>",
-                        //    "aButtons": ["csv", "xls", "pdf"]
-                        //}
-                    ],
-                    "sSwfPath": "assets/swf/copy_csv_xls_pdf.swf"
-                },
-                "language": {
-                    "search": "",
-                    "sLengthMenu": "_MENU_",
-                    "oPaginate": {
-                        "sPrevious": "Prev",
-                        "sNext": "Next"
-                    }
-                },
-                "aoColumns": [
-                    { "bVisible": false },
-                    null,
-                    null,
-                    null,
-                    { "bSortable": false }
-                ]
-            });
-        }
-    };
-}();
-
-var InitiateLocationDataTable = function () {
-    return {
-        init: function () {
-            //Datatable Initiating
-            var oTable = $('#editabledatatable').dataTable({
-                "aLengthMenu": [
-                    [10, 15, 20, 100, -1],
-                    [10, 15, 20, 100, "All"]
-                ],
-                "iDisplayLength": 15,
-                "sPaginationType": "bootstrap",
-                "sDom": "Tflt<'row DTTTFooter'<'col-sm-6'i><'col-sm-6'p>>",
-                "oTableTools": {
-                    "aButtons": [
                     ],
                     "sSwfPath": "assets/swf/copy_csv_xls_pdf.swf"
                 },

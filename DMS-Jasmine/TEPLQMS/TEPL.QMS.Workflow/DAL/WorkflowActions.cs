@@ -175,7 +175,39 @@ namespace TEPL.QMS.Workflow.DAL
             }
             return strReturn;
         }
-        public string ExecuteAction(Guid ExecutionID, Guid WorkflowStageID, Guid ActionedID, string WorkflowAction, string ActionComments, Guid CreatedID)
+
+        public string CreateActionForPrintRequest(Guid PrintRequestID, Guid ExecutionID, Guid WorkflowStageID, string ActionBy, 
+            Guid CreatedBy)
+        {
+            string strReturn = string.Empty;
+            try
+            {
+                using (SqlConnection con = new SqlConnection(WFConstants.WFDBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(WFConstants.spCreateActionForPrintRequest, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@PrintRequestID", SqlDbType.UniqueIdentifier).Value = PrintRequestID;
+                        cmd.Parameters.Add("@ExecutionID", SqlDbType.UniqueIdentifier).Value = ExecutionID;
+                        cmd.Parameters.Add("@WorkflowStageID", SqlDbType.UniqueIdentifier).Value = WorkflowStageID;
+                        cmd.Parameters.Add("@ActionedID", SqlDbType.NVarChar, -1).Value = ActionBy;
+                        cmd.Parameters.Add("@CreatedID", SqlDbType.UniqueIdentifier).Value = CreatedBy;
+
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                        con.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+            return strReturn;
+        }
+
+        public string ExecuteAction(Guid ExecutionID, Guid WorkflowStageID, Guid ActionedID, string WorkflowAction, string ActionComments, Guid CreatedID, bool isDocumentUploaded)
         {
             string strReturn = string.Empty;
             try
@@ -191,7 +223,7 @@ namespace TEPL.QMS.Workflow.DAL
                         cmd.Parameters.Add("@WorkflowAction", SqlDbType.NVarChar, 50).Value = WorkflowAction;
                         cmd.Parameters.Add("@ActionComments", SqlDbType.NVarChar, -1).Value = ActionComments;
                         cmd.Parameters.Add("@CreatedID", SqlDbType.UniqueIdentifier).Value = CreatedID;
-
+                        cmd.Parameters.Add("@DocsUploaded", SqlDbType.Bit).Value = isDocumentUploaded;
                         using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                         {
                             DataTable dt = new DataTable();
@@ -204,6 +236,41 @@ namespace TEPL.QMS.Workflow.DAL
             catch (Exception ex)
             {
                 LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+            return strReturn;
+        }
+
+        public string ExecutePrintRequestAction(Guid ExecutionID, Guid WorkflowStageID, Guid ActionedID, string WorkflowAction,
+                                                string ActionComments, Guid CreatedID)
+        {
+            string strReturn = string.Empty;
+            try
+            {
+                using (SqlConnection con = new SqlConnection(WFConstants.WFDBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(WFConstants.spExecutePrintRequestAction, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@ExecutionID", SqlDbType.UniqueIdentifier).Value = ExecutionID;
+                        cmd.Parameters.Add("@WorkflowStageID", SqlDbType.UniqueIdentifier).Value = WorkflowStageID;
+                        cmd.Parameters.Add("@ActionedID", SqlDbType.UniqueIdentifier).Value = ActionedID;
+                        cmd.Parameters.Add("@WorkflowAction", SqlDbType.NVarChar, 50).Value = WorkflowAction;
+                        cmd.Parameters.Add("@ActionComments", SqlDbType.NVarChar, -1).Value = ActionComments;
+                        cmd.Parameters.Add("@CreatedID", SqlDbType.UniqueIdentifier).Value = CreatedID;
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            DataTable dt = new DataTable();
+                            sda.Fill(dt);
+                            strReturn = dt.Rows[0][0].ToString();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
             }
             return strReturn;
         }

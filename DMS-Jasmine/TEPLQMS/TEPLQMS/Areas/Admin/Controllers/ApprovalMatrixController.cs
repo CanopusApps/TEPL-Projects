@@ -354,15 +354,16 @@ namespace TEPLQMS.Areas.Admin.Controllers
             try
             {
                 WFAdminBLL objWFAdm = new WFAdminBLL();
-                DataTable results = objWFAdm.GetUserApprovalItemsForAMID(new Guid(ID));
-                if (results.Rows.Count == 0)
-                {
-                    result = objWFAdm.DeleteWFApprovalMatrix(new Guid(ID));
-                }
-                else
-                {
-                    result = "Workflow items pending for selected users";
-                }
+                //DataTable results = objWFAdm.GetUserApprovalItemsForAMID(new Guid(ID));
+                //if (results.Rows.Count == 0)
+                //{
+                //    result = objWFAdm.DeleteWFApprovalMatrix(new Guid(ID));
+                //}
+                //else
+                //{
+                //    result = "Workflow items pending for selected users";
+                //}
+                result = objWFAdm.DeleteWFApprovalMatrix(new Guid(ID));
 
                 return Json(new { success = true, message = result }, JsonRequestBehavior.AllowGet);
             }
