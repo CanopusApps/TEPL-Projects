@@ -194,6 +194,9 @@ namespace TEPL.QMS.DAL.Database.Component
                         cmd.Parameters.Add("@RequestorID", SqlDbType.UniqueIdentifier).Value = objRequest.RequestorID;
                         cmd.Parameters.Add("@WFAction", SqlDbType.NVarChar, 50).Value = objRequest.Action;
                         cmd.Parameters.Add("@WFActionComments", SqlDbType.NVarChar, -1).Value = objRequest.ActionComments;
+                        cmd.Parameters.Add("@PrintCopies", SqlDbType.NVarChar, 10).Value = objRequest.PrintCopies;
+                        cmd.Parameters.Add("@PaperSize", SqlDbType.NVarChar, 20).Value = objRequest.PaperSize;
+                        cmd.Parameters.Add("@PrintPage", SqlDbType.NVarChar, 10).Value = objRequest.PrintPageOption;
 
                         //con.Open();
                         //cmd.ExecuteNonQuery();
@@ -448,7 +451,7 @@ namespace TEPL.QMS.DAL.Database.Component
             return strReturn;
         }
 
-        public string GetDocumentDetailsForPrintRequest(string DocumentNo)
+        public string GetDocumentDetailsForPrintRequest(string DocumentNo, Guid UserID)
         {
             string strReturn = string.Empty;
             try
@@ -459,6 +462,7 @@ namespace TEPL.QMS.DAL.Database.Component
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add("@DocumentNo", SqlDbType.NVarChar, 50).Value = DocumentNo;
+                        cmd.Parameters.Add("@UserID", SqlDbType.UniqueIdentifier).Value = UserID;
                         using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                         {
                             DataTable dt = new DataTable();

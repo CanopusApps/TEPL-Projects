@@ -1006,15 +1006,16 @@ namespace TEPL.QMS.BLL.Component
             }
             return ArrayOfObjects;
         }
-        public Object[] GetDocumentDetailsForPrintRequest(string DocumentNo)
+        public Object[] GetDocumentDetailsForPrintRequest(string DocumentNo, Guid UserID)
         {
+
             Object[] ArrayOfObjects = new Object[3];
             try
             {
                 string docNumberString = string.Empty;
                 Boolean isMissingApprovals = false;
                 DraftDocument objDocuments = null;
-                string strReturn = docOperObj.GetDocumentDetailsForPrintRequest(DocumentNo);
+                string strReturn = docOperObj.GetDocumentDetailsForPrintRequest(DocumentNo, UserID);
                 List<DraftDocument> objDraft = BindModels.ConvertJSON<DraftDocument>(strReturn);
                 if (objDraft != null)
                     objDocuments = objDraft[0];

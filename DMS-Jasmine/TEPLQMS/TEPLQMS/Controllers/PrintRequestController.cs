@@ -72,6 +72,7 @@ namespace TEPLQMS.Controllers
             {
                 DocumentUpload bllOBJ = new DocumentUpload();
                 string userID = System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID].ToString();
+                Guid UserID = new Guid(userID);
                 List<Project> list3 = (List<Project>)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserProjects];
                 if (documentNumber.Split('-').Length == 1)
                 {
@@ -99,7 +100,7 @@ namespace TEPLQMS.Controllers
                 //    return Json(new { success = true, message = "noaccess" }, JsonRequestBehavior.AllowGet);
                 //}
                 Object[] ArrayOfObjects = new Object[3];
-                ArrayOfObjects = bllOBJ.GetDocumentDetailsForPrintRequest(documentNumber);
+                ArrayOfObjects = bllOBJ.GetDocumentDetailsForPrintRequest(documentNumber, UserID);
                 return Json(new { success = true, message = ArrayOfObjects }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)

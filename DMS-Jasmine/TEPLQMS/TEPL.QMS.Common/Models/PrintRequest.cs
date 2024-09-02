@@ -55,8 +55,13 @@ namespace TEPL.QMS.Common.Models
         public string Action { get; set; }
         public string ActionComments { get; set; }
 
-        
-        
+        public string PrintPageOption { get; set; }
+        public string PrintPage { get; set; }
+        public string PrintCopies { get; set; }
+        public string PaperSize { get; set; }
+
+
+
 
         //public Guid SectionID { get; set; }
         //public string SectionCode { get; set; }
