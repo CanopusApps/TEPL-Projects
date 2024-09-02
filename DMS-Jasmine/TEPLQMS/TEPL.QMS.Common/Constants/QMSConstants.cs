@@ -139,5 +139,13 @@ namespace TEPL.QMS.Common.Constants
         public static string spGetUserApprovalItemsForAMID = "spGetUserApprovalItemsForAMID";
         public static string spValidateDocumentNumber = "spValidateDocumentNumber";
         public static string spCreatePrintRequest = "spCreatePrintRequest";
+        public static string spAddFunction = "spAddFunction";
+        public static string spUpdateFunction = "spUpdateFunction";
+        public static string spDeleteFunction = "spDeleteFunction"; 
+        public static string spGetFunctions = "spGetFunctions";
+        public static string spAddLocation = "spAddLocation";
+        public static string spUpdateLocation = "spUpdateLocation";
+        public static string spDeleteLocation = "spDeleteLocation";
+        public static string spGetLocation = "spGetLocation";
     }
 }
