@@ -209,6 +209,8 @@
     <Compile Include="Areas\Admin\Controllers\ExternalCategoryController.cs" />
     <Compile Include="Areas\Admin\Controllers\ExternalDocumentController.cs" />
     <Compile Include="Areas\Admin\Controllers\ExternalSubCategoryController.cs" />
+    <Compile Include="Areas\Admin\Controllers\FunctionController.cs" />
+    <Compile Include="Areas\Admin\Controllers\LocationController.cs" />
     <Compile Include="Areas\Admin\Controllers\ProjectController.cs" />
     <Compile Include="Areas\Admin\Controllers\SectionController.cs" />
     <Compile Include="Areas\Admin\Controllers\TemplateDocumentController.cs" />
@@ -685,6 +687,8 @@
     <Content Include="Areas\Admin\Views\ApprovalMatrix\Edit.cshtml" />
     <Content Include="Areas\Admin\Views\Users2\Index.cshtml" />
     <Content Include="Areas\Admin\Views\DirectUpload\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Function\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Location\Index.cshtml" />
     <None Include="assets\js\jqueryval\jquery.validate-vsdoc.js" />
     <Content Include="assets\js\jquery-ui.min.js" />
     <Content Include="assets\js\jquery.min.js" />

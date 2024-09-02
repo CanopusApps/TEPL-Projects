@@ -26,7 +26,9 @@
 				<mvcSiteMapNode title="Document Category" controller="Category" area="Admin" action="Index" imageUrl="glyphicon glyphicon-upload" description="ADMIN,QADM" roles="ADMIN,QMSADMIN" />
 				<mvcSiteMapNode title="Document No" controller="DocumentNo" area="Admin" action="Index" imageUrl="glyphicon glyphicon-upload" description="ADMIN,QADM" roles="ADMIN,QMSADMIN" />
 				<mvcSiteMapNode title="External Category" controller="ExternalCategory" area="Admin" action="Index" imageUrl="glyphicon glyphicon-upload" description="ADMIN,QADM" roles="ADMIN,QMSADMIN" />
-				<mvcSiteMapNode title="External SubCategory" controller="ExternalSubCategory" area="Admin" action="Index" imageUrl="glyphicon glyphicon-upload" description="ADMIN,QADM" roles="ADMIN,QMSADMIN" />				
+				<mvcSiteMapNode title="External SubCategory" controller="ExternalSubCategory" area="Admin" action="Index" imageUrl="glyphicon glyphicon-upload" description="ADMIN,QADM" roles="ADMIN,QMSADMIN" />
+        <mvcSiteMapNode title="Function" controller="Function" area="Admin" action="Index" imageUrl="glyphicon glyphicon-upload" description="ADMIN,QADM" roles="ADMIN,QMSADMIN" />
+        <mvcSiteMapNode title="PrintLocation" controller="Location" area="Admin" action="Index" imageUrl="glyphicon glyphicon-upload" description="ADMIN,QADM" roles="ADMIN,QMSADMIN" />
 			</mvcSiteMapNode>
 		</mvcSiteMapNode>		
 	</mvcSiteMapNode>

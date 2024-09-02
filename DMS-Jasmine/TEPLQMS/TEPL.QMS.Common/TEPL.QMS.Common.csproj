@@ -123,6 +123,8 @@
     <Compile Include="Models\ExternalSubCategory.cs" />
     <Compile Include="Models\ExternalCategory.cs" />
     <Compile Include="Models\ExternalDocument.cs" />
+    <Compile Include="Models\Function.cs" />
+    <Compile Include="Models\Location.cs" />
     <Compile Include="Models\MultipleApproversDisplay.cs" />
     <Compile Include="Models\MultipleApprovers.cs" />
     <Compile Include="Models\Departments.cs" />

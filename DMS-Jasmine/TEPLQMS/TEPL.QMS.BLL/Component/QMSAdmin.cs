@@ -1266,5 +1266,152 @@ namespace TEPL.QMS.BLL.Component
             }
             return strReturn;
         }
+
+        public string AddFunction(Function objFunc)
+        {
+            string strReturn = string.Empty;
+            try
+            {
+                DataTable dt = objAdmin.AddFunction(objFunc);
+                if (dt.Rows.Count > 0)
+                    strReturn = dt.Rows[0][0].ToString();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return strReturn;
+        }
+        public string UpdateFunction(Function objFunc)
+        {
+            string strReturn = string.Empty;
+            try
+            {
+                DataTable dt = objAdmin.UpdateFunction(objFunc);
+                if (dt.Rows.Count > 0)
+                    strReturn = dt.Rows[0][0].ToString();
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+            return strReturn;
+        }
+        public string DeleteFunction(Guid id)
+        {
+            string strReturn = string.Empty;
+            try
+            {
+                DataTable dt = objAdmin.DeleteFunction(id);
+                if (dt.Rows.Count > 0)
+                    strReturn = dt.Rows[0][0].ToString();
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+            return strReturn;
+        }
+        public List<Function> GetFunction()
+        {
+            List<Function> list = new List<Function>();
+            try
+            {
+                DataTable dt = objAdmin.GetFunction();
+                for (int z = 0; z < dt.Rows.Count; z++)
+                {
+                    Function itm = new Function();
+                    itm.ID = new Guid(dt.Rows[z]["ID"].ToString());
+                    itm.Code = dt.Rows[z]["Code"].ToString();
+                    itm.Title = dt.Rows[z]["Title"].ToString();
+                    if (Convert.ToBoolean(dt.Rows[z]["IsActive"].ToString()) == true)
+                        itm.Active = true;
+                    else
+                        itm.Active = false;
+                    list.Add(itm);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+            }
+            return list;
+        }
+
+        public List<Location> GetLocation()
+        {
+            List<Location> list = new List<Location>();
+            try
+            {
+                DataTable dt = objAdmin.GetLocation();
+                for (int z = 0; z < dt.Rows.Count; z++)
+                {
+                    Location itm = new Location();
+                    itm.ID = new Guid(dt.Rows[z]["ID"].ToString());
+                    itm.Code = dt.Rows[z]["Code"].ToString();
+                    itm.Title = dt.Rows[z]["Title"].ToString();
+                    if (Convert.ToBoolean(dt.Rows[z]["IsActive"].ToString()) == true)
+                        itm.Active = true;
+                    else
+                        itm.Active = false;
+                    list.Add(itm);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+            }
+            return list;
+        }
+        public string AddLocation(Location objLoc)
+        {
+            string strReturn = string.Empty;
+            try
+            {
+                DataTable dt = objAdmin.AddLocation(objLoc);
+                if (dt.Rows.Count > 0)
+                    strReturn = dt.Rows[0][0].ToString();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return strReturn;
+        }
+        public string UpdateLocation(Location objLoc)
+        {
+            string strReturn = string.Empty;
+            try
+            {
+                DataTable dt = objAdmin.UpdateLocation(objLoc);
+                if (dt.Rows.Count > 0)
+                    strReturn = dt.Rows[0][0].ToString();
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+            return strReturn;
+        }
+        public string DeleteLocation(Guid id)
+        {
+            string strReturn = string.Empty;
+            try
+            {
+                DataTable dt = objAdmin.DeleteLocation(id);
+                if (dt.Rows.Count > 0)
+                    strReturn = dt.Rows[0][0].ToString();
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+            return strReturn;
+        }
+
     }
 }
