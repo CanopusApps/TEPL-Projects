@@ -23,5 +23,13 @@ namespace TEPL.QDMS.WindowsService.Business
         {
             return objAdminDAL.GetRevalidationDocuments(cutOffDate);
         }
+        public DataTable GetApprovalPendingDocumentsHOD()
+        {
+            return objAdminDAL.GetApprovalPendingDocumentsHOD();
+        }
+        public DataTable SetIsArchivedForDocuments(string DocumentNo)
+        {
+            return objAdminDAL.SetIsArchivedForDocuments(DocumentNo);
+        }
     }
 }

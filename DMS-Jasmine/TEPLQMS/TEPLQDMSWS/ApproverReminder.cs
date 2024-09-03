@@ -18,10 +18,11 @@ namespace TEPLQDMSWS
         public void GetApproverReminderDocuments()
         {
             WSAdminBLL objAdmin = new WSAdminBLL();
-            DataTable dt = objAdmin.GetApprovalPendingDocuments();
+            //DataTable dt = objAdmin.GetApprovalPendingDocuments();
+            DataTable dt = objAdmin.GetApprovalPendingDocumentsHOD();
             var grouped = from table in dt.AsEnumerable()
-                          where table.Field<Int32>("PendingDays") > 2
-                          group table by new { ApproverEmail = table["ApproverEmail"], ApproverName = table["ApproverName"] } into groupby
+                          where table.Field<Int32>("PendingDays") == 3 || table.Field<Int32>("PendingDays") == 4 || table.Field<Int32>("PendingDays") == 5 || table.Field<Int32>("PendingDays") >= 7
+                          group table by new { ApproverEmail = table["ApproverEmail"], ApproverName = table["ApproverName"], PendingDays = table["PendingDays"] } into groupby
                           select new
                           {
                               Value = groupby.Key,
@@ -29,7 +30,8 @@ namespace TEPLQDMSWS
                           };
             string strMailSubject = string.Empty;
             StringBuilder strMailBody = new StringBuilder();
-            string toEmailid = string.Empty,ccEmail=string.Empty;
+            string toEmailid = string.Empty, ccEmail = string.Empty, subject = string.Empty;
+
             foreach (var key in grouped)
             {
                 Console.WriteLine(key.Value.ApproverEmail);
@@ -47,10 +49,41 @@ namespace TEPLQDMSWS
                 strMailBody.Append("Link to approve documents: <a style='text-decoration:underline' target='_blank' href='" +
                 ConfigurationManager.AppSettings["websiteURL"].ToString() + "Inbox'>" + "Click here" + "</a>");
                 toEmailid = key.Value.ApproverEmail.ToString();
+
+                if (key.ColumnValues.FirstOrDefault()["PendingDays"].ToString() == "3")
+                {
+                    subject = "1st Reminder !! Documents waiting for your action";
+                    MailSend.PrepareandSendMail("ApprovalMailTemplate", key.Value.ApproverName.ToString(), toEmailid, ccEmail, ccEmail, subject, "", strMailBody.ToString());
+                    strMailBody.Clear();
+                }
+                else if (key.ColumnValues.FirstOrDefault()["PendingDays"].ToString() == "4")
+                {
+                    subject = "2nd Reminder !! Documents waiting for your action";
+                    MailSend.PrepareandSendMail("ApprovalMailTemplate", key.Value.ApproverName.ToString(), toEmailid, ccEmail, ccEmail, subject, "", strMailBody.ToString());
+                    strMailBody.Clear();
+                }
+                else if (key.ColumnValues.FirstOrDefault()["PendingDays"].ToString() == "5")
+                {
+                    subject = "Final Reminder !! Documents waiting for your action";
+                    ccEmail = key.ColumnValues.FirstOrDefault()["HOD"].ToString();
+                    MailSend.PrepareandSendMail("ApprovalMailTemplate", key.Value.ApproverName.ToString(), toEmailid, ccEmail, ccEmail, subject, "", strMailBody.ToString());
+                    strMailBody.Clear();
+                }
+                else
+                {
+
+                    strMailBody.Clear();
+                    foreach (var columnValue in key.ColumnValues)
+                    {
+                        Console.WriteLine("---------------------------");
+                        Console.WriteLine(columnValue["DocumentNo"].ToString());
+                        Console.WriteLine("---------------------------");
+                        objAdmin.SetIsArchivedForDocuments(columnValue["DocumentNo"].ToString());
+                    }
+                }
                 //toEmailid = "rajesh.m-ext@tataelectronics.co.in";
                 //toEmailid = "siva.d-ext@tataelectronics.co.in";
-                MailSend.PrepareandSendMail("ApprovalMailTemplate", key.Value.ApproverName.ToString(), toEmailid,ccEmail, "dms.support@tataelectronics.co.in", "Documents waiting for your action", "", strMailBody.ToString());
-                strMailBody.Clear();
+
             }
         }
         public void GetApproverEsclationDocuments()

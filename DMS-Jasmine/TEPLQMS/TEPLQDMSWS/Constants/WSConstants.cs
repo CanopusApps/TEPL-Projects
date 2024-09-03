@@ -25,5 +25,9 @@ namespace TEPL.QDMS.WindowsService.Constants
         public static string spGetWFApprovers = "spGetWFApprovers";
         public static string spInsertWFApprovalMatrix = "spInsertWFApprovalMatrix";
         public static string spUpdateWFApprovalMatrix = "spUpdateWFApprovalMatrix";
+        public static string spGetApprovalPendingDocumentsWITH_HOD = "spGetApprovalPendingDocumentsWITH_HOD";
+        public static string spSetArchivedLatePendingDocuments = "spSetArchivedLatePendingDocuments";
+
+
     }
 }

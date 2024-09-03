@@ -85,5 +85,54 @@ namespace TEPL.QDMS.WindowsService.DAL
             }
             return dt;
         }
+
+        public DataTable GetApprovalPendingDocumentsHOD()
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(WSConstants.DBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(WSConstants.spGetApprovalPendingDocumentsWITH_HOD, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(dt);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+            }
+            return dt;
+        }
+
+        public DataTable SetIsArchivedForDocuments(string DocumentNo)
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(WSConstants.DBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(WSConstants.spSetArchivedLatePendingDocuments, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@DocumentNo", SqlDbType.NVarChar).Value = DocumentNo;
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(dt);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+            }
+            return dt;
+        }
     }
 }
