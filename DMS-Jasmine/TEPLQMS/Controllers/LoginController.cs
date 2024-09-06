@@ -28,6 +28,7 @@ namespace TEPLQMS.Controllers
     {
         TEPLQMS.Models.Database.DataBaseEntities db = new Models.Database.DataBaseEntities();
         // GET: Login
+        //LOgin test
         public ActionResult Index()
         {
             return View();
