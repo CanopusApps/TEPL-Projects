@@ -789,6 +789,7 @@ namespace TEPL.QMS.DAL.Database.Component
             }
             catch (Exception ex)
             {
+                LoggerBlock.WriteTraceLog(ex);
                 throw ex;
             }
             return dt;
@@ -909,6 +910,7 @@ namespace TEPL.QMS.DAL.Database.Component
                         {
                             sda.Fill(dt);
                         }
+                        LoggerBlock.WriteLog("After getting data in GetDraftDocuments method in QMSAdminDAL class");
                     }
                 }
             }

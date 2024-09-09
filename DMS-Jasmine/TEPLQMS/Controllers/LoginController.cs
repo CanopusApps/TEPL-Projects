@@ -93,7 +93,7 @@ namespace TEPLQMS.Controllers
                     var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
                     HttpContext.Response.Cookies.Add(authCookie);
 
-                    LoggerBlock.WriteLog("User for the email " + LoginId + " cookie is created.");
+                    LoggerBlock.WriteLog("User " + LoginId + " cookie is created.");
                     return Json(new { success = true, message = "sucess" }, JsonRequestBehavior.AllowGet);
                 }
                 else
@@ -152,7 +152,7 @@ namespace TEPLQMS.Controllers
                     var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
                     HttpContext.Response.Cookies.Add(authCookie);
 
-                    LoggerBlock.WriteLog("User for the email " + LoginId + " cookie is created.");
+                    LoggerBlock.WriteLog("User " + LoginId + " cookie is created.");
                     return Json(new { success = true, message = "sucess" }, JsonRequestBehavior.AllowGet);
                 }
                 else

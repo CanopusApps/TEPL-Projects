@@ -39,12 +39,13 @@ namespace TEPL.QMS.Common.Constants
         public static Guid WorkflowID = Guid.Parse(ConfigurationManager.AppSettings["WorkflowID"]);
         public static Guid PrintWorkflowID = Guid.Parse(ConfigurationManager.AppSettings["PrintWorkflowID"]);
         public static string QMSHeadEmail = Convert.ToString(ConfigurationManager.AppSettings["QMSHeadEmail"]);
+        public static string AuthCookieName = Convert.ToString(ConfigurationManager.AppSettings["AuthCookieName"]);
 
         public const string LoggedInUserID = "LoggedInUserID";
         public const string LoggedInUserDisplayName = "LoggedInUserDisplayName";
         public const string LoggedInUserProjects = "LoggedInUserProjects";
         public const string LoggedInUserRoles = "LoggedInUserRoles";
-        public const string AuthCookieName = "teplqdms";
+        
 
         //StoredProcedures
         public static string spGenerateDocumentNo = "spGenerateDocumentNo";

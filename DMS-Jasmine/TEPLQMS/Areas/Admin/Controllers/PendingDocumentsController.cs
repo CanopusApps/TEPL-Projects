@@ -59,6 +59,7 @@ namespace TEPLQMS.Areas.Admin.Controllers
             }
             catch (Exception ex)
             {
+                LoggerBlock.WriteLog("In exception in GetDocumentsPending in PendingDocuments COntroller and message is " + ex.InnerException.Message.ToString());
                 LoggerBlock.WriteTraceLog(ex);
                 return Json(new { success = false, message = "error" }, JsonRequestBehavior.AllowGet);
             }

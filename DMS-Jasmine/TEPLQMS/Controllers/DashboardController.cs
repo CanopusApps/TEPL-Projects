@@ -71,9 +71,9 @@ namespace TEPLQMS.Controllers
         {
             Guid LoggedInUserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
             DocumentUpload obj = new DocumentUpload();
-            byte[] fileContent = obj.GetExportPublishedDocuments(department, section, project, category, DocumentDescription, LoggedInUserID, IsProjectActive);
+            byte[] fileContent = obj.GetExportPublishedDocuments(department, section, project, category, DocumentDescription, LoggedInUserID, IsProjectActive);            
             //return File(fileContent, System.Net.Mime.MediaTypeNames.Application.Octet, LoggedInUserID + ".xlsx");
-            string base64 = Convert.ToBase64String(fileContent, 0, fileContent.Length);
+            string base64 = Convert.ToBase64String(fileContent, 0, fileContent.Length);            
             return Content(base64);
         }
         public ActionResult GetPublishedDocuments(string department, string section, string project, string category, string DocumentDescription, bool IsProjectActive)
