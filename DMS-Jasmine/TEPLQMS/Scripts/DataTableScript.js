@@ -300,6 +300,7 @@ var InitiateInboxDataTable = function () {
                     null,
                     null,
                     null,
+                    null,
                     { "bSortable": false }
                 ]
             });
@@ -433,6 +434,7 @@ var InitiateApproverInboxDataTable = function () {
                     null,
                     null,
                     null,
+                    null,
                     { "bSortable": false }
                 ]
             });            
@@ -477,6 +479,7 @@ var InitiateApprovedInboxDataTable = function () {
                     null,
                     null,
                     null,                    
+                    null,
                     null,
                     null,
                     null,
