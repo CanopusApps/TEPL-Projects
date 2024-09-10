@@ -116,6 +116,7 @@ namespace TEPL.QMS.Common.Constants
         public static string spUpdateMultipleApprovers = "spUpdateMultipleApprovers";
         public static string spDeleteDocument = "spDeleteDocument";
         public static string spArchiveDocument = "spArchiveDocument";
+        public static string spArchivePendingDocument = "spArchivePendingDocument";
         public static string spGetAllExternalDocuments = "spGetAllExternalDocuments";
         public static string spGetExternalDocumentSeqNumber = "spGetExternalDocumentSeqNumber";
         public static string spGetExternalDocumentDetailsForID = "spGetExternalDocumentDetailsForID";
