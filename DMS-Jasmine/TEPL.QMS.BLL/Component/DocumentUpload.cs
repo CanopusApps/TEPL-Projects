@@ -429,8 +429,94 @@ namespace TEPL.QMS.BLL.Component
             }
             return strResult;
         }
-
         public void AddWatermarkonPDF(string ipFilename, string docLevel)
+        {
+            try
+            {
+                //Watermark text
+                string cntrWatermark = "TCPL CONFIDENTIAL";
+                // string rgtTopWatermark = "MP CONFIDENTIAL";
+                string rgtBtmWatermark = "TCPL Confidential" + System.Environment.NewLine +
+                    "No Copy/Reproduction allowed" + System.Environment.NewLine + System.Environment.NewLine +
+                    "CONTROLLED COPY" + System.Environment.NewLine + "ISSUED BY DMS" +
+                    System.Environment.NewLine + System.Environment.NewLine + DateTime.Now.ToString("dd-MM-yyyy") +
+                    System.Environment.NewLine + "TCPL-DCC";
+
+                //Create a new PDF document
+                PdfDocument document = new PdfDocument();
+
+                //string ipFilename = Path.GetFullPath("Data/ToTestPPT1.pdf");
+                //string FilePath = Server.MapPath("ToTestPPT1.pdf");
+                //string ipFilename = "D:\\Sample.pdf";
+
+                //Open PDF document
+                document = PdfReader.Open(ipFilename);
+
+                // Set version to PDF 1.4 (Acrobat 5) because we use transparency.
+                if (document.Version < 14)
+                    document.Version = 14;
+
+                // Create a font
+                XFont cntrFont = new XFont("Arial", 40, XFontStyleEx.Bold);
+                XFont rgtFont = new XFont("Arial", 12, XFontStyleEx.Bold);
+
+                for (int idx = 0; idx < document.Pages.Count; idx++)
+                {
+                    var page = document.Pages[idx];
+
+                    //-- Page Center watermark
+                    // Get an XGraphics object for drawing beneath the existing content.
+                    var gfx = XGraphics.FromPdfPage(page, XGraphicsPdfPageOptions.Append);
+
+                    // Get the size (in points) of the text.
+                    var cntrTxtSize = gfx.MeasureString(cntrWatermark, cntrFont);
+
+                    // Define a rotation transformation at the center of the page.
+                    gfx.TranslateTransform(page.Width / 2, page.Height / 2);
+                    gfx.RotateTransform(-Math.Atan(page.Height / page.Width) * 180 / Math.PI);
+                    gfx.TranslateTransform(-page.Width / 2, -page.Height / 2);
+
+                    // Create a string format.
+                    var cntrFormat = new XStringFormat();
+                    cntrFormat.Alignment = XStringAlignment.Near;
+                    cntrFormat.LineAlignment = XLineAlignment.Near;
+
+                    // Create a colored brush.
+                    XBrush cntrBrush = new XSolidBrush(XColor.FromArgb(60, 69, 69, 69)); //light black
+                    XBrush rgtBrush = new XSolidBrush(XColor.FromArgb(60, 0, 110, 255)); //blue 
+
+                    // Format text and add rectangle border
+                    XTextFormatter cntrTf = new XTextFormatter(gfx);
+                    XRect cntrRect = new XRect((page.Width - cntrTxtSize.Width) / 2, (page.Height - cntrTxtSize.Height) / 2, 450, 20); //rgt pos, vertical pos of textbox, width, height
+                    cntrTf.Alignment = XParagraphAlignment.Center;
+                    //XPen cntrPen = new XPen(XColors.Black, 1);
+                    XPen cntrPen = new XPen(XColor.FromArgb(255, 200, 200, 200), 1);
+                    cntrTf.DrawString(cntrWatermark, cntrFont, cntrBrush, cntrRect, cntrFormat);
+                    gfx.Dispose();
+
+                    if (docLevel != "Level 4")
+                    {
+                        var rgtBtmGfx = XGraphics.FromPdfPage(page, XGraphicsPdfPageOptions.Append);
+                        // Format text and add rectangle border at right bottom corner
+                        XTextFormatter rgtBtmTf = new XTextFormatter(rgtBtmGfx);
+                        XRect rect = new XRect((page.Width - 260), (page.Height - 120), 318, 1020);//rgt pos, vertical pos of textbox, width, height
+                        rgtBtmTf.Alignment = XParagraphAlignment.Center;
+                        XPen pen = new XPen(XColors.Black, 1);
+                        rgtBtmTf.DrawString(rgtBtmWatermark, rgtFont, rgtBrush, rect, XStringFormats.TopLeft);
+                    }
+                }
+
+                string opFilename = ipFilename;
+                document.Save(opFilename);
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+        }
+
+        public void AddWatermarkonPDF_old_1(string ipFilename, string docLevel)
         {
             try
             {
