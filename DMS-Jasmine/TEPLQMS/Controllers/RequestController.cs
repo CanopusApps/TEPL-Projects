@@ -360,27 +360,27 @@ namespace TEPLQMS.Controllers
                 return Json(new { success = true, message = "failed" }, JsonRequestBehavior.AllowGet);
             }
         }
-        [CustomAuthorize(Roles = "QADM")]
-        public ActionResult ArchivePendingDocument(string DocumentID, string DocumentNo)
-        {
-            try
-            {
-                Guid UserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
-                string UserName = System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserDisplayName].ToString();
-                QMSAdmin objAdm = new QMSAdmin();
-                DraftDocument objDoc = new DraftDocument();
-                DocumentUpload obj = new DocumentUpload();
-                objDoc = obj.GetDocumentDetailsByID("User", UserID, new Guid(DocumentID));
+        //[CustomAuthorize(Roles = "QADM")]
+        //public ActionResult ArchivePendingDocument(string DocumentID, string DocumentNo)
+        //{
+        //    try
+        //    {
+        //        Guid UserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
+        //        string UserName = System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserDisplayName].ToString();
+        //        QMSAdmin objAdm = new QMSAdmin();
+        //        DraftDocument objDoc = new DraftDocument();
+        //        DocumentUpload obj = new DocumentUpload();
+        //        objDoc = obj.GetDocumentDetailsByID("User", UserID, new Guid(DocumentID));
 
-                string strMessage = objAdm.ArchivePendingDocument(UserID, new Guid(DocumentID), DocumentNo, UserName, objDoc);
-                return Json(new { success = true, message = strMessage }, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
-            {
-                LoggerBlock.WriteTraceLog(ex);
-                return Json(new { success = true, message = "failed" }, JsonRequestBehavior.AllowGet);
-            }
-        }
+        //        string strMessage = objAdm.ArchivePendingDocument(UserID, new Guid(DocumentID), DocumentNo, UserName, objDoc);
+        //        return Json(new { success = true, message = strMessage }, JsonRequestBehavior.AllowGet);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        LoggerBlock.WriteTraceLog(ex);
+        //        return Json(new { success = true, message = "failed" }, JsonRequestBehavior.AllowGet);
+        //    }
+        //}
         [HttpPost]
         [CustomAuthorize(Roles = "QADM")]
         public ActionResult EditDocument()
