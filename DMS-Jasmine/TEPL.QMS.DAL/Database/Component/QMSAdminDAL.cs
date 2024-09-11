@@ -108,32 +108,6 @@ namespace TEPL.QMS.DAL.Database.Component
             return ds;
         }
 
-        public DataSet ArchiveDocument(Guid UserID, Guid DocumentID, string DocumentNo)
-        {
-            DataSet ds = new DataSet();
-            try
-            {
-                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
-                {
-                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spArchiveDocument, con))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@UserID", SqlDbType.UniqueIdentifier).Value = UserID;
-                        cmd.Parameters.Add("@DocumentID", SqlDbType.UniqueIdentifier).Value = DocumentID;
-                        cmd.Parameters.Add("@DocumentNo", SqlDbType.NVarChar, 100).Value = DocumentNo;
-                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
-                        {
-                            sda.Fill(ds);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            return ds;
-        }
         public DataSet ArchivePendingDocument(Guid UserID, Guid DocumentID, string DocumentNo)
         {
             DataSet ds = new DataSet();
@@ -160,6 +134,33 @@ namespace TEPL.QMS.DAL.Database.Component
             }
             return ds;
         }
+
+        public DataSet ArchiveDocument(Guid UserID, Guid DocumentID, string DocumentNo)
+        {
+            DataSet ds = new DataSet();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spArchiveDocument, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@UserID", SqlDbType.UniqueIdentifier).Value = UserID;
+                        cmd.Parameters.Add("@DocumentID", SqlDbType.UniqueIdentifier).Value = DocumentID;
+                        cmd.Parameters.Add("@DocumentNo", SqlDbType.NVarChar, 100).Value = DocumentNo;
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(ds);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return ds;
+        }        
         public DataTable AddDepartment(Departments objDept)
         {
             DataTable dt = new DataTable();
@@ -815,6 +816,7 @@ namespace TEPL.QMS.DAL.Database.Component
             }
             catch (Exception ex)
             {
+                LoggerBlock.WriteTraceLog(ex);
                 throw ex;
             }
             return dt;
@@ -935,6 +937,7 @@ namespace TEPL.QMS.DAL.Database.Component
                         {
                             sda.Fill(dt);
                         }
+                        LoggerBlock.WriteLog("After getting data in GetDraftDocuments method in QMSAdminDAL class");
                     }
                 }
             }

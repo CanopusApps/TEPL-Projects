@@ -355,26 +355,39 @@ namespace TEPL.QMS.Common
         {
             // create a new object
             T item = new T();
-
-            // set the item
-            SetItemFromRow(item, row);
+            try
+            {
+                // set the item
+                SetItemFromRow(item, row);
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }          
 
             // return 
             return item;
         }
         public static void SetItemFromRow<T>(T item, DataRow row) where T : new()
         {
-            // go through each column
-            foreach (DataColumn c in row.Table.Columns)
+            try
             {
-                // find the property for the column
-                PropertyInfo p = item.GetType().GetProperty(c.ColumnName);
-
-                // if exists, set the value
-                if (p != null && row[c] != DBNull.Value)
+                // go through each column
+                foreach (DataColumn c in row.Table.Columns)
                 {
-                    p.SetValue(item, row[c], null);
+                    // find the property for the column
+                    PropertyInfo p = item.GetType().GetProperty(c.ColumnName);
+
+                    // if exists, set the value
+                    if (p != null && row[c] != DBNull.Value)
+                    {
+                        p.SetValue(item, row[c], null);
+                    }
                 }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
             }
         }
 

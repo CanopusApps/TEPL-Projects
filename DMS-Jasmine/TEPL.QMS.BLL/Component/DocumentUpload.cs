@@ -19,6 +19,7 @@ using PdfSharp.Drawing;
 using PdfSharp.Pdf.IO;
 using PdfSharp.Pdf;
 using System.Data.SqlClient;
+using System.Web.UI.WebControls;
 
 namespace TEPL.QMS.BLL.Component
 {
@@ -1262,10 +1263,12 @@ namespace TEPL.QMS.BLL.Component
                 dt1.TableName = "PublishedDocuments";
                 ExcelOperations.ExportDataSet(dt1, strExcelPath);
                 fileContent = File.ReadAllBytes(strExcelPath);
+                
             }
             catch (Exception ex)
             {
                 LoggerBlock.WriteTraceLog(ex);
+                throw ex;
             }
             return fileContent;
         }
@@ -1297,25 +1300,37 @@ namespace TEPL.QMS.BLL.Component
             {
                 DataTable dt;
                 dt = objAdminDAL.GetDraftDocuments(DepartmentCode, SectionCode, ProjectCode, DocumentCategoryCode, DocumentDescription, UserID);
+                LoggerBlock.WriteLog("After getting data in GetDraftDocuments method in DocumentUpload class");
                 objDocList = new List<DraftDocument>();
                 objDocList = GetDocuments(dt, IsProjectActive);
             }
             catch (Exception ex)
             {
+                LoggerBlock.WriteLog("in Exception in GetDraftDocuments method in DocumentUpload class and Message is " + ex.InnerException.Message.ToString());
                 LoggerBlock.WriteTraceLog(ex);
+                throw ex;
             }
             return objDocList;
         }
         public List<DraftDocument> GetDocuments(DataTable dt, bool IsProjectActive)
         {
             List<DraftDocument> objDocList = new List<DraftDocument>();
-            foreach (DataRow dr in dt.Rows)
+            try
             {
-                if (Convert.ToBoolean(dr["ProjectActive"].ToString()) == IsProjectActive)
+                foreach (DataRow dr in dt.Rows)
                 {
-                    DraftDocument objDocument = CommonMethods.CreateItemFromRow<DraftDocument>(dr); // CommonMethods.GetDocumentObject(dr);
-                    objDocList.Add(objDocument);
+                    if (Convert.ToBoolean(dr["ProjectActive"].ToString()) == IsProjectActive)
+                    {
+                        DraftDocument objDocument = CommonMethods.CreateItemFromRow<DraftDocument>(dr); // CommonMethods.GetDocumentObject(dr);
+                        objDocList.Add(objDocument);
+                    }
                 }
+            }
+            catch(Exception ex)
+            {
+                LoggerBlock.WriteLog("In exception in GetDocuments in DocumentUpload Class and Message is " + ex.InnerException.Message.ToString());
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
             }
             return objDocList;
         }
