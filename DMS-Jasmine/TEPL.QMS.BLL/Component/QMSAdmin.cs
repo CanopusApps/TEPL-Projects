@@ -357,7 +357,46 @@ namespace TEPL.QMS.BLL.Component
                 throw ex;
             }
         }
+        //public string ArchivePendingDocument(Guid UserID, Guid DocumentID, string DocumentNo, string UserName, DraftDocument objDoc)
+        //{
+        //    try
+        //    {
+        //        string strReturn = string.Empty;
 
+        //        //Move data to publish if workflow is in pending stage
+        //        if (objDoc.CurrentStage != "Completed")
+        //        {
+        //            string EditableURL = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.EditableFilePath, objDoc.EditableDocumentName);
+        //            string ReadableURL = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName);
+        //            DocumentUpload bllOBJ = new DocumentUpload();
+        //            objDoc.EditableByteArray = bllOBJ.DownloadDocument(EditableURL);
+        //            objDoc.ReadableByteArray = bllOBJ.DownloadDocument(ReadableURL);
+
+        //            WorkflowActions objWF = new WorkflowActions();
+        //            docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.EditableFilePath, objDoc.EditableDocumentName, objDoc.DraftVersion, objDoc.EditableByteArray);
+        //            docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName, objDoc.DraftVersion, objDoc.ReadableByteArray);
+        //            //docOperObj.DocumentPublish(objDoc);
+        //        }
+
+        //        DataSet ds = new DataSet();
+        //        ds = objAdmin.ArchivePendingDocument(UserID, DocumentID, DocumentNo);
+        //        string DeptHODEmail = ds.Tables[0].Rows[0][0].ToString();
+        //        string QMSHead = QMSConstants.QMSHeadEmail.ToString();
+
+        //        //Send email to QMS Head & Department HOD
+        //        string subject = DocumentNo + " - " + " Document Archived from the system by " + UserName;
+        //        string message = "Document with the number " + DocumentNo + " has been Archived from the System by " + UserName + ". Now this document available in Archived Documents section in the system. <br/>";
+        //        message += "Please review the document and delete from the system if not required.";
+        //        PrepareandSendMail(DeptHODEmail + "," + QMSHead, subject, message);
+
+        //        strReturn = "Document Archived Successfully";
+        //        return strReturn;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
         private string GetApprovalMailTempate()
         {
             string strMailtemplate = string.Empty;

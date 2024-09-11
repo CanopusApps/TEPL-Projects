@@ -849,6 +849,7 @@ namespace TEPL.QMS.BLL.Component
                     obj.RequestType = dt.Rows[z]["RequestType"].ToString();
                     obj.DocumentID = new Guid(dt.Rows[z]["DocumentID"].ToString());
                     obj.DocumentNo = dt.Rows[z]["DocumentNo"].ToString();
+                    obj.DocumentDescription = dt.Rows[z]["DocumentDescription"].ToString();
                     obj.DepartmentName = dt.Rows[z]["DepartmentName"].ToString();
                     obj.SectionName = dt.Rows[z]["SectionName"].ToString();
                     obj.DocumentCategoryName = dt.Rows[z]["DocumentCategoryName"].ToString();
@@ -913,6 +914,7 @@ namespace TEPL.QMS.BLL.Component
                     obj.RequestType = dt.Rows[z]["RequestType"].ToString();
                     obj.DocumentID = new Guid(dt.Rows[z]["DocumentID"].ToString());
                     obj.DocumentNo = dt.Rows[z]["DocumentNo"].ToString();
+                    obj.DocumentDescription = dt.Rows[z]["DocumentDescription"].ToString();
                     obj.DepartmentName = dt.Rows[z]["DepartmentName"].ToString();
                     obj.SectionName = dt.Rows[z]["SectionName"].ToString();
                     obj.DocumentCategoryName = dt.Rows[z]["DocumentCategoryName"].ToString();
@@ -946,6 +948,7 @@ namespace TEPL.QMS.BLL.Component
                     obj.RequestType = dt.Rows[z]["RequestType"].ToString();
                     obj.DocumentID = new Guid(dt.Rows[z]["DocumentID"].ToString());
                     obj.DocumentNo = dt.Rows[z]["DocumentNo"].ToString();
+                    obj.DocumentDescription = dt.Rows[z]["DocumentDescription"].ToString();
                     obj.DepartmentName = dt.Rows[z]["DepartmentName"].ToString();
                     obj.SectionName = dt.Rows[z]["SectionName"].ToString();
                     obj.DocumentCategoryName = dt.Rows[z]["DocumentCategoryName"].ToString();

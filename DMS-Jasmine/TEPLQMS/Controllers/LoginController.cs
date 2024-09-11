@@ -116,7 +116,7 @@ namespace TEPLQMS.Controllers
             {
                 //PrincipalContext context = new PrincipalContext(ContextType.Domain);
                 PrincipalContext context = new PrincipalContext(ContextType.Domain, "tataelectronics.co.in");
-                bool isValid = context.ValidateCredentials(LoginId, password);
+                bool isValid =  context.ValidateCredentials(LoginId, password);
                 var roles = "";
                 if (isValid == true)
                 {
