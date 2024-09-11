@@ -653,41 +653,11 @@
                 }
             });
         }
-
         function PendingArchiveDocument() {
             bootbox.confirm("Are you sure to Archive the Document?", function (result) {
                 if (result) {
                     var DocumentID = $("#divDocumentID").text();
                     var DocumentNo = $("#divDocumentNo").text();
-
-                    $.ajax({
-                        url: '/Request/ArchivePendingDocument',
-                        dataType: "json",
-                        type: "POST",
-                        contentType: 'application/json; charset=utf-8',
-                        beforeSend: ShowProgressBar(),
-                        complete: HideProgressBar(),
-                        cache: false,
-                        async: true,
-                        data: JSON.stringify({ DocumentID: DocumentID, DocumentNo: DocumentNo }),
-                        success: function (data) {
-                            if (data.success) {
-                                $('.btn-success').trigger('click');
-                                $('.modal-body').html(data.message);
-
-                                //redirect after success altert close
-                                $('#modal-success').on('hide.bs.modal', function () {
-                                    window.location = '/Dashboard';
-                                })
-                            }
-                        },
-                        error: function (xhr) {
-                            alert('error ' + xhr.message);
-                        }
-                    });
-                }
-            });
-        }
 
                     $.ajax({
                         url: '/Request/ArchivePendingDocument',
