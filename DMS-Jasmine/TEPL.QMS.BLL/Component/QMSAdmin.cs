@@ -294,7 +294,7 @@ namespace TEPL.QMS.BLL.Component
                     WorkflowActions objWF = new WorkflowActions();
                     docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.EditableFilePath, objDoc.EditableDocumentName, objDoc.DraftVersion, objDoc.EditableByteArray);
                     docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName, objDoc.DraftVersion, objDoc.ReadableByteArray);
-                    //docOperObj.DocumentPublish(objDoc);
+                    docOperObj.DocumentPublish(objDoc);
                 }
 
                 DataSet ds = new DataSet();
