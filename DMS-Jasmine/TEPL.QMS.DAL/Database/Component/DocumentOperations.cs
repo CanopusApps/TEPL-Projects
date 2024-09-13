@@ -1117,5 +1117,33 @@ namespace TEPL.QMS.DAL.Database.Component
         {
             Directory.CreateDirectory(folderPath);
         }
+        public string GetAchievedDocumentDetailsByID(Guid UserID, Guid DocumentID)
+        {
+            string strReturn = string.Empty;
+            try
+            {
+                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
+                {
+                    con.Open();
+                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spGetAchievedDocumentDetailsByID, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@DocumentID", SqlDbType.UniqueIdentifier).Value = DocumentID;
+                        cmd.Parameters.Add("@UserID", SqlDbType.UniqueIdentifier).Value = UserID;
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            DataTable dt = new DataTable();
+                            sda.Fill(dt);
+                            strReturn = dt.Rows[0][0].ToString();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+            }
+            return strReturn;
+        }
     }
 }

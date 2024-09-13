@@ -1178,7 +1178,26 @@ namespace TEPL.QMS.BLL.Component
             }
             return objDocuments;
         }
-
+        public DraftDocument GetAchievedDocumentDetailsByID(Guid loggedInUserID, Guid DocumentID, bool isHistory)
+        {
+            DraftDocument objDocuments = null;
+            try
+            {
+                string strReturn = "";
+                if (isHistory)
+                    strReturn = docOperObj.GetPublishedDocumentHistoryDetailsByID(loggedInUserID, DocumentID);
+                else
+                    strReturn = docOperObj.GetAchievedDocumentDetailsByID(loggedInUserID, DocumentID);
+                List<DraftDocument> objDraft = BindModels.ConvertJSON<DraftDocument>(strReturn);
+                if (objDraft != null)
+                    objDocuments = objDraft[0];
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+            }
+            return objDocuments;
+        }
         public DraftDocument GetPublishedDocumentDetailsByID(Guid loggedInUserID, Guid DocumentID, bool isHistory)
         {
             DraftDocument objDocuments = null;

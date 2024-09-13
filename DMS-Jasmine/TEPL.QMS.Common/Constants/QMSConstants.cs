@@ -149,5 +149,6 @@ namespace TEPL.QMS.Common.Constants
         public static string spUpdateLocation = "spUpdateLocation";
         public static string spDeleteLocation = "spDeleteLocation";
         public static string spGetLocation = "spGetLocation";
+        public static string spGetAchievedDocumentDetailsByID = "spGetAchievedDocumentDetailsByID";
     }
 }
