@@ -789,10 +789,11 @@
     <Content Include="assets\swf\copy_csv_xls.swf" />
     <Content Include="assets\swf\copy_csv_xls_pdf.swf" />
     <Content Include="Content\Site.css" />
+    <Content Include="DocumentViewerFiles\Default.htm" />
     <Content Include="favicon.ico" />
     <Content Include="favicon.png" />
     <Content Include="Global.asax" />
-    <Content Include="DocumentViewerFiles\Default.htm" />
+    <Content Include="DocumentViewerFiles\Backup-Default.htm" />
     <Content Include="DocumentViewerFiles\pdf.min.js" />
     <Content Include="DocumentViewerFiles\pdf.worker.min.js" />
     <Content Include="DocumentViewerFiles\pdf_viewer.min.css" />

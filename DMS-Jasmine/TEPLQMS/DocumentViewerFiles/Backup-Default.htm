@@ -12,49 +12,6 @@
             height: 820px;
             overflow: auto;
         }
-        #zoom_controls {
-            margin-bottom: 10px;
-        }
-
-        button {
-            padding: 5px 10px;
-            margin-right: 10px;
-        }
-
-        .zoom-button {
-            background-color: #2dc3e8;
-            color: white;
-            border: none;
-            padding: 10px;
-            font-size: 18px;
-            border-radius: 5px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .zoom-button:hover {
-            background-color: #2dc3e8;
-        }
-
-        .zoom-button i {
-            font-size: 20px;
-        }
-
-        #zoom_controls {
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-        }        
-    </style>
-    <style>
-        
     </style>
 </head>
 <body>
@@ -63,23 +20,22 @@
     <meta http-equiv='pragma' content='no-cache' />
     <!--<input type="button" id="btnPreview" value="Preview PDF Document" onclick="LoadPdfFromUrl('PDFs/Sample.pdf')" />
     <hr />-->
-    <div id="zoom_controls">
-        <button id="zoom_out" class="zoom-button"><span style="font:100px;">&#10134;</span></button>
-        <button id="zoom_in" class="zoom-button"><span style="font:100px;">&#10133;</span></button>
-    </div>
     <div id="pdf_container">
     </div>
-    <script type="text/javascript" src="pdf.min.js"></script>
-    <link href="pdf_viewer.min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf_viewer.min.css"
+          rel="stylesheet" type="text/css" />
     <script type="text/javascript">
         //https://www.aspsnippets.com/Articles/3551/Display-View-PDF-file-without-downloading-using-JavaScript/
         //Disable right click on the page
         document.addEventListener('contextmenu', event => {
             event.preventDefault();
         });
+        //Disable keys
         document.onkeydown = function (e) {
             return false;
         }
+
         //disable print screen - start - https://codepen.io/sartaj-husain/pen/NYRKGQ
         document.addEventListener("keyup", function (e) {
             var keyCode = e.keyCode ? e.keyCode : e.which;
@@ -110,7 +66,7 @@
 
         LoadPdfFromUrl('');
         var pdfjsLib = window['pdfjs-dist/build/pdf'];
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdf.worker.min.js';
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js';
         var pdfDoc = null;
         var scale = 1; //Set Scale for zooming PDF.
         var resolution = 2; //Set Resolution to Adjust PDF clarity.
@@ -134,35 +90,31 @@
                 var pdf_container = document.getElementById("pdf_container");
                 pdf_container.style.display = "block";
 
-                RenderPages();
+                //Loop and render all pages.
+                for (var i = 1; i <= pdfDoc.numPages; i++) {
+                    RenderPage(pdf_container, i);
+                }
             });
         };
-
-        function RenderPages() {
-            var pdf_container = document.getElementById("pdf_container");
-            pdf_container.innerHTML = ''; // Clear the container before re-rendering.
-
-            // Loop and render all pages.
-            for (var i = 1; i <= pdfDoc.numPages; i++) {
-                RenderPage(pdf_container, i);
-            }
-        }
-
         function RenderPage(pdf_container, num) {
             pdfDoc.getPage(num).then(function (page) {
+                //Create Canvas element and append to the Container DIV.
                 var canvas = document.createElement('canvas');
                 canvas.id = 'pdf-' + num;
-                var ctx = canvas.getContext('2d');
+                ctx = canvas.getContext('2d');
                 pdf_container.appendChild(canvas);
 
+                //Create and add empty DIV to add SPACE between pages.
                 var spacer = document.createElement("div");
                 spacer.style.height = "20px";
                 pdf_container.appendChild(spacer);
 
+                //Set the Canvas dimensions using ViewPort and Scale.
                 var viewport = page.getViewport({ scale: scale });
                 canvas.height = resolution * viewport.height;
                 canvas.width = resolution * viewport.width;
 
+                //Render the PDF page.
                 var renderContext = {
                     canvasContext: ctx,
                     viewport: viewport,
@@ -171,20 +123,7 @@
 
                 page.render(renderContext);
             });
-        }
-
-        // Zoom In/Out Functionality
-        document.getElementById('zoom_in').addEventListener('click', function () {
-            scale += 0.2; // Increase the scale
-            RenderPages(); // Re-render pages with updated scale
-        });
-
-        document.getElementById('zoom_out').addEventListener('click', function () {
-            if (scale > 0.2) {
-                scale -= 0.2; // Decrease the scale
-                RenderPages(); // Re-render pages with updated scale
-            }
-        });
+        };
     </script>
 </body>
 </html>
