@@ -408,10 +408,10 @@
 
         $("#btnSubmit").click(function () {
             if ($("#PrintReason").val().trim() != '' && $("#ddlLocation").val() != '0' && $("#PrintCopies").val().trim() != '' &&
-                $("#ddlPaperSize").val() != '0' && $("#PrintPageInput").val().trim() != '') {
+                $("#ddlPaperSize").val() != '0' /*&& $("#PrintPageInput").val().trim() != ''*/) {
 
                 $("#PrintReason").removeClass("manfieldredborder"); $("#ddlLocation").removeClass("manfieldredborder");
-                $("#PrintCopies").removeClass("manfieldredborder"); $("#ddlPaperSize").removeClass("manfieldredborder"); /*$("#PrintPageInput").removeClass("manfieldredborder");*/
+                $("#PrintCopies").removeClass("manfieldredborder"); $("#ddlPaperSize").removeClass("manfieldredborder"); $("#PrintPageInput").removeClass("manfieldredborder");
 
                 var fileData = new FormData();
                 var printPageOption = $('input[name="form-field-radio"]:checked').val();

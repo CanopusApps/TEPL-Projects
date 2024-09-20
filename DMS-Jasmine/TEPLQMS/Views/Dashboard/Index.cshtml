@@ -160,8 +160,8 @@
                             <td style="text-align:center" nowrap>
                                 @if (@txt.DocumentLevel == "Level 4")
                                 {
-                                    <a style="text-decoration:underline;white-space:nowrap;" href='@Url.Action("DownloadDocument", "Dashboard", new { folderPath = @txt.ReadableFilePath, folder = TEPL.QMS.Common.Constants.QMSConstants.PublishedFolder, versionNo = @txt.OriginalVersion, fileName = @txt.ReadableDocumentName })'>ReadableDocument</a><br />
-                                    <a style="text-decoration:underline;white-space:nowrap;" href='@Url.Action("DownloadDocument", "Dashboard", new { folderPath = @txt.EditableFilePath, folder = TEPL.QMS.Common.Constants.QMSConstants.PublishedFolder, versionNo = @txt.OriginalVersion, fileName = @txt.EditableDocumentName })'>EditableDocument</a>
+                                    <a style="text-decoration:underline;white-space:nowrap;" href='@Url.Action("DownloadDocument", "Dashboard", new { folderPath = @txt.ReadableFilePath, folder = TEPL.QMS.Common.Constants.QMSConstants.PublishedFolder, versionNo = @txt.OriginalVersion, fileName = @txt.ReadableDocumentName })'>EditableDocument</a><br />
+                                    <a style="text-decoration:underline;white-space:nowrap;" href='@Url.Action("DownloadDocument", "Dashboard", new { folderPath = @txt.EditableFilePath, folder = TEPL.QMS.Common.Constants.QMSConstants.PublishedFolder, versionNo = @txt.OriginalVersion, fileName = @txt.EditableDocumentName })'>ReadableDocument</a>
                                 }
                                 else
                                 {
