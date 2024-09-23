@@ -598,6 +598,40 @@
             });            
         }
 
+        function DeleteDocument() {
+            bootbox.confirm("System will permanently deletes the document, Are you sure to Delete?", function (result) {
+                if (result) {
+                    var DocumentID = $("#divDocumentID").text();
+                    var DocumentNo = $("#divDocumentNo").text();
+                    $.ajax({
+                        url: '/Request/DeleteArchivedDocument',
+                        dataType: "json",
+                        type: "POST",
+                        contentType: 'application/json; charset=utf-8',
+                        beforeSend: ShowProgressBar(),
+                        complete: HideProgressBar(),
+                        cache: false,
+                        async: true,
+                        data: JSON.stringify({ DocumentID: DocumentID, DocumentNo: DocumentNo }),
+                        success: function (data) {
+                            if (data.success) {
+                                $('.btn-success').trigger('click');
+                                $('.modal-body').html(data.message);
+
+                                //redirect after success altert close
+                                $('#modal-success').on('hide.bs.modal', function () {
+                                    window.location = '/Admin/ArchivedDocuments';
+                                })
+                            }
+                        },
+                        error: function (xhr) {
+                            alert('error ' + xhr.message);
+                        }
+                    });
+                }
+            });
+        }
+
         function UpdateDocumentDetails() {
             var catCode = '';
             catCode = $("#divCatCode").text();
