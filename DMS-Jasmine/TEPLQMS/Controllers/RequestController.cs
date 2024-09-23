@@ -325,6 +325,23 @@ namespace TEPLQMS.Controllers
                 return Json(new { success = true, message = "failed" }, JsonRequestBehavior.AllowGet);
             }
         }
+        [CustomAuthorize(Roles = "QADM")]
+        public ActionResult DeleteArchivedDocument(string DocumentID, string DocumentNo)
+        {
+            try
+            {
+                Guid UserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
+                string UserName = System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserDisplayName].ToString();
+                QMSAdmin objAdm = new QMSAdmin();
+                string strMessage = objAdm.DeleteArchivedDocument(UserID, new Guid(DocumentID), UserName, DocumentNo);
+                return Json(new { success = true, message = strMessage }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                return Json(new { success = true, message = "failed" }, JsonRequestBehavior.AllowGet);
+            }
+        }
 
         [CustomAuthorize(Roles = "QADM")]
         public ActionResult ArchivePendingDocument(string DocumentID, string DocumentNo)

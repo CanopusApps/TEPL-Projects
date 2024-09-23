@@ -294,7 +294,7 @@ namespace TEPL.QMS.BLL.Component
                     WorkflowActions objWF = new WorkflowActions();
                     docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.EditableFilePath, objDoc.EditableDocumentName, objDoc.DraftVersion, objDoc.EditableByteArray);
                     docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName, objDoc.DraftVersion, objDoc.ReadableByteArray);
-                    docOperObj.DocumentPublish(objDoc);
+                    //docOperObj.DocumentPublish(objDoc);
                 }
 
                 DataSet ds = new DataSet();
@@ -539,7 +539,116 @@ namespace TEPL.QMS.BLL.Component
                 throw ex;
             }
         }
+        public string DeleteArchivedDocument(Guid UserID, Guid DocumentID, string UserName, string DocumentNo)
+        {
+            try
+            {
+                string strReturn = string.Empty;
+                DataSet ds = new DataSet();
+                ds = objAdmin.DeleteArchivedDocument(UserID, DocumentID);
+                DocumentOperations docOper = new DocumentOperations();
+                if (!string.IsNullOrEmpty(ds.Tables[0].Rows[0][0].ToString()))
+                {
+                    string json = ds.Tables[0].Rows[0][0].ToString();
+                    List<DraftDocument> objDraftDoc = BindModels.ConvertJSON<DraftDocument>(json);
 
+                    docOper.DeleteFile(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDraftDoc[0].EditableFilePath, objDraftDoc[0].EditableDocumentName, objDraftDoc[0].DraftVersion);
+                    docOper.DeleteFile(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDraftDoc[0].ReadableFilePath, objDraftDoc[0].ReadableDocumentName, objDraftDoc[0].DraftVersion);
+                    //need to write logic to delete from archive folders.
+                    if (!string.IsNullOrEmpty(ds.Tables[1].Rows[0][0].ToString()))
+                    {
+                        json = ds.Tables[1].Rows[0][0].ToString();
+                        objDraftDoc = BindModels.ConvertJSON<DraftDocument>(json);
+                        docOper.DeleteFile(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDraftDoc[0].EditableFilePath, objDraftDoc[0].EditableDocumentName, objDraftDoc[0].OriginalVersion);
+                        docOper.DeleteFile(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDraftDoc[0].ReadableFilePath, objDraftDoc[0].ReadableDocumentName, objDraftDoc[0].OriginalVersion);
+                        //need to write logic to delete from archive folders.
+                        strReturn = "Document deleted successfully";
+                    }
+                    else
+                    {
+                        strReturn = "Document present in draft stage only and deleted successfully";
+                    }
+
+                    if (ds.Tables[6].Rows.Count > 0)
+                    {
+                        // Iterate over each DataRow in the DataTable
+                        foreach (DataRow row in ds.Tables[6].Rows)
+                        {
+                            // Retrieve the original version and calculate the ceiling value
+                            decimal originalVersion = Convert.ToDecimal(row["OriginalVersion"]);
+                            string version = Math.Ceiling(originalVersion).ToString();
+
+                            // Retrieve file path and document name
+                            string filePath = row["txtEditableFilePath"].ToString();
+                            string documentName = row["txtEditableDocumentName"].ToString();
+                            string fileExtension = Path.GetExtension(documentName);
+
+                            // Construct the new document name with the version appended
+                            string newDocumentName = documentName.Replace(fileExtension, $"_V{version}{fileExtension}");
+
+                            // Perform the file deletion operation for the main document
+                            docOper.DeleteFile(
+                                Path.Combine(QMSConstants.BackUpPath),
+                                Path.Combine(QMSConstants.HistoryBackUpPath, QMSConstants.PublishedFolder),
+                                filePath,
+                                newDocumentName,
+                                originalVersion
+                            );
+
+                            // Retrieve the readable file path and document name
+                            string readableFilePath = row["txtReadableFilePath"].ToString();
+                            string readableDocumentName = row["txtReadableDocumentName"].ToString();
+                            string newReadableExtension = Path.GetExtension(readableDocumentName);
+
+                            // Construct the new readable document name with the version appended
+                            string newReadableDocumentName = readableDocumentName.Replace(newReadableExtension, $"_V{version}{newReadableExtension}");
+
+                            // Perform the file deletion operation for the readable document
+                            docOper.DeleteFile(
+                                Path.Combine(QMSConstants.BackUpPath),
+                                Path.Combine(QMSConstants.HistoryBackUpPath, QMSConstants.PublishedFolder),
+                                readableFilePath,
+                                newReadableDocumentName,
+                                originalVersion
+                            );
+                        }
+                        // Return success message
+                        strReturn = "Documents deleted successfully";
+                    }
+                    else
+                    {
+                        strReturn = "Documents deleted successfully";
+                    }
+
+                    //Send email to QMS Head & Department HOD
+                    string QMSHead = QMSConstants.QMSHeadEmail.ToString();
+                    string DeptHODEmail = "";
+                    try
+                    {
+                        DeptHODEmail = ds.Tables[9].Rows[0][0].ToString();
+                    }
+                    catch
+                    {
+
+                    }
+                    string subject = DocumentNo + " - " + " Document Deleted permanently from the system by " + UserName;
+                    string message = "Document with the number " + DocumentNo + " has been Deleted from the System by " + UserName + ". Now this document no more available in the system. <br/>";
+                    //message += "Please review the document and delete from the system if not required.";
+                    PrepareandSendMail(DeptHODEmail + "," + QMSHead, subject, message);
+
+                }
+                else
+                {
+                    strReturn = "Document not found to delete";
+                }
+                return strReturn;
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+        }
         public List<Sections> GetSections()
         {
             List<Sections> list = new List<Sections>();
