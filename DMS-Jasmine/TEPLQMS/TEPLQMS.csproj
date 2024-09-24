@@ -244,7 +244,7 @@
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="T4MVCExtensions">
-      <HintPath>..\TEPL.QMS.Workflow\bin\Debug\T4MVCExtensions.dll</HintPath>
+      <HintPath>..\T4MVCExtensions.dll</HintPath>
     </Reference>
     <Reference Include="WebActivatorEx">
       <HintPath>..\packages\WebActivatorEx.2.0.1\lib\net40\WebActivatorEx.dll</HintPath>
