@@ -159,13 +159,18 @@
                         }
                         else {
                             $('.btn-success').trigger('click');
-                            $('.modal-body').html('Document Approved Successfully.');
-                            $("#DOCFile").val(''); $("#txtComments").val();
-                            //redirect after success altert close
+                            if (action.toLowerCase() === 'approved') {
+                                $('.modal-body').html('Document Approved Successfully.');
+                            } else if (action.toLowerCase() === 'rejected') {
+                                $('.modal-body').html('Document Rejected Successfully.');
+                            }
+                            $("#DOCFile").val('');
+                            $("#txtComments").val('');
+                            // Redirect after success alert close
                             $('#modal-success').on('hide.bs.modal', function () {
                                 window.location = '/Inbox';
-                            })
-                        }
+                            });
+                        }                        
                     }
                     else {
                         $('.btn-danger').trigger('click');
