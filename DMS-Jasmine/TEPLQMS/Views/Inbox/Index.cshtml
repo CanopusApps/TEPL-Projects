@@ -298,7 +298,7 @@
                                     detailsLink = '<a  style="text-decoration:underline;" href="#" onclick="showPrintDetails(\'' + data.message[z].DocumentID + '\',\'' + data.message[z].CurrentStage + '\');">View Details</a>';
                                 }
 
-                                var record = [data.message[z].SeqNo, data.message[z].DocumentID, data.message[z].RequestType, data.message[z].DocumentNo, data.message[z].DocumentNo, data.message[z].DepartmentName, data.message[z].SectionName, data.message[z].ProjectName, data.message[z].DocumentCategoryName, ToJavaScriptDate(data.message[z].CreatedDate), data.message[z].CurrentStage, detailsLink];
+                                var record = [data.message[z].SeqNo, data.message[z].DocumentID, data.message[z].RequestType, data.message[z].DocumentNo, data.message[z].DocumentDescription, data.message[z].DepartmentName, data.message[z].SectionName, data.message[z].ProjectName, data.message[z].DocumentCategoryName, ToJavaScriptDate(data.message[z].CreatedDate), data.message[z].CurrentStage, detailsLink];
                                 $("#editabledatatable").dataTable().fnAddData(record);
                             }
                         }
@@ -354,7 +354,7 @@
                                 else {
                                     detailsLink = '<a  style="text-decoration:underline;" href="#" onclick="ViewApprovePrintRequest(\'' + data.message[z].DocumentID + '\');">Take Action</a>';
                                 }
-                                var record = [data.message[z].SeqNo, data.message[z].DocumentID, data.message[z].RequestType, data.message[z].DocumentNo, data.message[z].DocumentNo, data.message[z].DepartmentName, data.message[z].SectionName, data.message[z].ProjectName, data.message[z].DocumentCategoryName, data.message[z].UploadedUserName, ToJavaScriptDate(data.message[z].CreatedDate), data.message[z].CurrentStage, detailsLink];
+                                var record = [data.message[z].SeqNo, data.message[z].DocumentID, data.message[z].RequestType, data.message[z].DocumentNo, data.message[z].DocumentDescription, data.message[z].DepartmentName, data.message[z].SectionName, data.message[z].ProjectName, data.message[z].DocumentCategoryName, data.message[z].UploadedUserName, ToJavaScriptDate(data.message[z].CreatedDate), data.message[z].CurrentStage, detailsLink];
                                 $("#editabledatatableApprover").dataTable().fnAddData(record);
                             }
                         }
@@ -404,7 +404,7 @@
                                 //    detailsLink = '<a  style="text-decoration:underline;" href="#" onclick="ViewApprovePrintRequest(\'' + data.message[z].DocumentID + '\');">Take Action</a>';
                                 //}
 
-                                var record = [data.message[z].SeqNo, data.message[z].DocumentID, data.message[z].RequestType, data.message[z].DocumentNo, data.message[z].DocumentNo, data.message[z].DepartmentName, data.message[z].SectionName, data.message[z].ProjectName, data.message[z].UploadedUserName, ToJavaScriptDate(data.message[z].CreatedDate), data.message[z].CurrentStage, ToJavaScriptDate(data.message[z].ModifiedDate)];
+                                var record = [data.message[z].SeqNo, data.message[z].DocumentID, data.message[z].RequestType, data.message[z].DocumentNo, data.message[z].DocumentDescription, data.message[z].DepartmentName, data.message[z].SectionName, data.message[z].ProjectName, data.message[z].UploadedUserName, ToJavaScriptDate(data.message[z].CreatedDate), data.message[z].CurrentStage, ToJavaScriptDate(data.message[z].ModifiedDate)];
                                 $("#editabledatatableApprovedItems").dataTable().fnAddData(record);
                             }
                         }
