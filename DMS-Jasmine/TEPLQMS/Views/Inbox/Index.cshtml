@@ -238,20 +238,28 @@
             $("#tblUser").show();
             $("#tblApprovedItems").hide();
             $("#tblApprover").hide();
+            clearSearchInput("#editabledatatable");
             GetUserRequests();
         })
         $("#rbnApprover").click(function () {
             $("#tblUser").hide();
             $("#tblApprovedItems").hide();
             $("#tblApprover").show();
+            clearSearchInput("#editabledatatableApprover");
             GetApproverRequests();
         });
         $("#rbnApprovedItems").click(function () {
             $("#tblUser").hide();
             $("#tblApprovedItems").show();
             $("#tblApprover").hide();
+            clearSearchInput("#editabledatatableApprovedItems");
             GetApprovedRequests();
         })
+        function clearSearchInput(tableSelector) {
+            $(tableSelector).DataTable().search('').draw();
+            $(`${tableSelector}_filter input`).val('');
+        }
+
 
         function GetUserRequests() {
             //Delete all existing records
