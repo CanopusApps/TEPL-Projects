@@ -183,11 +183,11 @@ namespace TEPL.QMS.BLL.Component
                     objDoc.DraftVersion = objDoc.DraftVersion + 0.001m;
                 }
 
-                if (objDoc.CurrentStage == "QMS Approver")
-                {
-                    string filePath = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName);
-                    AddWatermarkonPDF(filePath, objDoc.DocumentLevel);
-                }
+                //if (objDoc.CurrentStage == "QMS Approver")
+                //{
+                //    string filePath = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName);
+                //    AddWatermarkonPDF(filePath, objDoc.DocumentLevel);
+                //}
 
                 docOperObj.DocumentDescriptionUpdate(objDoc);
 
@@ -438,7 +438,7 @@ namespace TEPL.QMS.BLL.Component
                 // string rgtTopWatermark = "MP CONFIDENTIAL";
                 string rgtBtmWatermark = "TCPL Confidential" + System.Environment.NewLine +
                     "No Copy/Reproduction allowed" + System.Environment.NewLine + System.Environment.NewLine +
-                    "CONTROLLED COPY" + System.Environment.NewLine + "ISSUED BY DMS" +
+                    "CONTROLLED COPY" + System.Environment.NewLine + "PUBLISHED BY DMS" +
                     System.Environment.NewLine + System.Environment.NewLine + DateTime.Now.ToString("dd-MM-yyyy") +
                     System.Environment.NewLine + "TCPL-DCC";
 
@@ -525,7 +525,7 @@ namespace TEPL.QMS.BLL.Component
                 //  string rgtTopWatermark = "MP CONFIDENTIAL";
                 string rgtBtmWatermark = "TCPL Confidential" + System.Environment.NewLine +
                     "No Copy/Reproduction allowed" + System.Environment.NewLine + System.Environment.NewLine +
-                    "CONTROLLED COPY" + System.Environment.NewLine + "ISSUED BY DMS" +
+                    "CONTROLLED COPY" + System.Environment.NewLine + "PUBLISHED BY DMS" +
                     System.Environment.NewLine + System.Environment.NewLine + DateTime.Now.ToString("dd-MM-yyyy") +
                     System.Environment.NewLine + "TCPL-DCC";
 
@@ -650,7 +650,7 @@ namespace TEPL.QMS.BLL.Component
                 string rgtTopWatermark = "MP CONFIDENTIAL";
                 string rgtBtmWatermark = "TCPL Confidential" + System.Environment.NewLine +
                     "No Copy/Reproduction allowed" + System.Environment.NewLine + System.Environment.NewLine +
-                    "CONTROLLED COPY" + System.Environment.NewLine + "ISSUED BY DMS" +
+                    "CONTROLLED COPY" + System.Environment.NewLine + "PUBLISHED BY DMS" +
                     System.Environment.NewLine + System.Environment.NewLine + DateTime.Now.ToString("dd-MM-yyyy") +
                     System.Environment.NewLine + "TCPL-DCC";
 
@@ -777,11 +777,13 @@ namespace TEPL.QMS.BLL.Component
                     docOperObj.UploadWOEncryptWOBackup(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName, objDoc.DraftVersion, objDoc.ReadableByteArray);
                     objDoc.DraftVersion = objDoc.DraftVersion + 0.001m;
 
-                    string filePath = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName);
-                    AddWatermarkonPDF(filePath, objDoc.DocumentLevel);
-                    string filePath2 = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName);
-                    AddWatermarkonPDF(filePath2, objDoc.DocumentLevel);
+                    
                 }
+                string filePath = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName);
+                AddWatermarkonPDF(filePath, objDoc.DocumentLevel);
+                string filePath2 = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName);
+                AddWatermarkonPDF(filePath2, objDoc.DocumentLevel);
+
                 docOperObj.DocumentDescriptionUpdate(objDoc);
                 objWF.ExecuteAction(objDoc.WFExecutionID, objDoc.CurrentStageID, objDoc.ActionedID, objDoc.Action, objDoc.ActionComments, objDoc.ActionedID, isDocumentUploaded);
                 objDoc = docOperObj.DocumentPublish(objDoc);
