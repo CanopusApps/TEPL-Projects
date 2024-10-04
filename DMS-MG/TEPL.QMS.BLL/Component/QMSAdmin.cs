@@ -18,13 +18,13 @@ namespace TEPL.QMS.BLL.Component
     {
         QMSAdminDAL objAdmin = new QMSAdminDAL();
         DAL.Database.Component.DocumentOperations docOperObj = new DAL.Database.Component.DocumentOperations();
-        public List<DocumentNumbers> GetDocumentNumbers(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode, string FunctionCode)
+        public List<DocumentNumbers> GetDocumentNumbers(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode)
         {
             List<DocumentNumbers> list = new List<DocumentNumbers>();
             try
             {
                 //DataTable dt = lstOp.GetListData(SharePointConstants.siteURL, listName, SharePointConstants.mstListViewFields, SharePointConstants.mstListCondition);
-                DataTable dt = objAdmin.GetDocumentNumbers(DepartmentCode, SectionCode, ProjectCode, DocumentCategoryCode, FunctionCode);
+                DataTable dt = objAdmin.GetDocumentNumbers(DepartmentCode, SectionCode, ProjectCode, DocumentCategoryCode);
                 //dt.DefaultView.Sort = "Title ASC";
                 //dt = dt.DefaultView.ToTable();
                 for (int z = 0; z < dt.Rows.Count; z++)
@@ -39,8 +39,8 @@ namespace TEPL.QMS.BLL.Component
                     itm.ProjectName = dt.Rows[z]["ProjectName"].ToString();
                     itm.DocumentCategoryCode = dt.Rows[z]["DocumentCategoryCode"].ToString();
                     itm.DocumentCategoryName = dt.Rows[z]["DocumentCategoryName"].ToString();
-                    itm.FunctionCode = dt.Rows[z]["FunctionCode"].ToString();
-                    itm.FunctionName = dt.Rows[z]["FunctionName"].ToString();
+                    //itm.FunctionCode = dt.Rows[z]["FunctionCode"].ToString();
+                    //itm.FunctionName = dt.Rows[z]["FunctionName"].ToString();
                     itm.DocumentLevel = dt.Rows[z]["DocumentLevel"].ToString();
                     itm.SerialNo = dt.Rows[z]["SerialNo"].ToString();
                     list.Add(itm);
