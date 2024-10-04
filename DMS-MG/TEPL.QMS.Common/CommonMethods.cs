@@ -292,25 +292,56 @@ namespace TEPL.QMS.Common
             return objDoc;
         }
 
+        //public static PrintRequest GetPrintRequestObject(NameValueCollection RequestForm)
+        //{
+        //    Dictionary<string, object> dict2 = new Dictionary<string, object>();
+        //    foreach (string str in RequestForm.AllKeys)
+        //    {
+        //        if (RequestForm[str] != null)
+        //        {
+        //            if (str == "MultipleApprovers")
+        //                dict2.Add(str, JsonConvert.DeserializeObject(RequestForm[str]));
+        //            else if (str == "MultipleApproversDisplay")
+        //                dict2.Add(str, JsonConvert.DeserializeObject(RequestForm[str]));
+        //            else dict2.Add(str, RequestForm[str]);
+
+        //        }
+        //    }
+        //    string json = JsonConvert.SerializeObject(dict2);
+        //    PrintRequest objDoc = JsonConvert.DeserializeObject<PrintRequest>(json);
+        //    return objDoc;
+        //}
         public static PrintRequest GetPrintRequestObject(NameValueCollection RequestForm)
         {
             Dictionary<string, object> dict2 = new Dictionary<string, object>();
+
             foreach (string str in RequestForm.AllKeys)
             {
-                if (RequestForm[str] != null)
-                {
-                    if (str == "MultipleApprovers")
-                        dict2.Add(str, JsonConvert.DeserializeObject(RequestForm[str]));
-                    else if (str == "MultipleApproversDisplay")
-                        dict2.Add(str, JsonConvert.DeserializeObject(RequestForm[str]));
-                    else dict2.Add(str, RequestForm[str]);
+                string value = RequestForm[str];
 
+                // Check if the value is 'undefined' and replace it with null
+                if (value != null && value != "undefined")
+                {
+                    if (str == "MultipleApprovers" || str == "MultipleApproversDisplay")
+                    {
+                        dict2.Add(str, JsonConvert.DeserializeObject(value));
+                    }
+                    else
+                    {
+                        dict2.Add(str, value);  // Add valid value
+                    }
+                }
+                else
+                {
+                    dict2.Add(str, null);  // Set null for 'undefined' or null values
                 }
             }
+
             string json = JsonConvert.SerializeObject(dict2);
             PrintRequest objDoc = JsonConvert.DeserializeObject<PrintRequest>(json);
             return objDoc;
         }
+
 
         public static LoginUser GetUserObject(string strJSON)
         {

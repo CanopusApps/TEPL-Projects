@@ -23,9 +23,9 @@ namespace TEPL.QMS.DAL.Database.Component
             try
             {
                 string spName = "";
-                if (objDoc.DocumentLevel == "Level 1")
-                    spName = QMSConstants.spGenerateDocumentNoLevel1;
-                else
+                //if (objDoc.DocumentLevel == "Level 1")
+                //    spName = QMSConstants.spGenerateDocumentNoLevel1;
+                //else
                     spName = QMSConstants.spGenerateDocumentNo;
                 using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
                 {
@@ -38,7 +38,7 @@ namespace TEPL.QMS.DAL.Database.Component
                         cmd.Parameters.Add("@DepartmentCode", SqlDbType.NVarChar, 10).Value = objDoc.DepartmentCode;
                         cmd.Parameters.Add("@SectionCode", SqlDbType.NVarChar, 10).Value = objDoc.SectionCode;
                         cmd.Parameters.Add("@ProjectCode", SqlDbType.NVarChar, 10).Value = objDoc.ProjectCode;
-                        cmd.Parameters.Add("@FunctionCode", SqlDbType.NVarChar, 10).Value = objDoc.FunctionCode;
+                        //cmd.Parameters.Add("@FunctionCode", SqlDbType.NVarChar, 10).Value = objDoc.FunctionCode;
                         cmd.Parameters.Add("@DocumentCategoryCode", SqlDbType.NVarChar, 10).Value = objDoc.DocumentCategoryCode;
                         cmd.Parameters.Add("@CreatedID", SqlDbType.UniqueIdentifier).Value = objDoc.UploadedUserID;
                         cmd.Parameters.Add("@DocumentLevel", SqlDbType.NVarChar, 10).Value = objDoc.DocumentLevel;

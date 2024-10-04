@@ -13,7 +13,7 @@ namespace TEPL.QMS.DAL.Database.Component
 {
     public class QMSAdminDAL
     {
-        public DataTable GetDocumentNumbers(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode, string FunctionCode)
+        public DataTable GetDocumentNumbers(string DepartmentCode, string SectionCode, string ProjectCode, string DocumentCategoryCode)
         {
             DataTable dt = new DataTable();
             try
@@ -27,7 +27,6 @@ namespace TEPL.QMS.DAL.Database.Component
                         cmd.Parameters.Add("@SectionCode", SqlDbType.NVarChar, 10).Value = SectionCode;
                         cmd.Parameters.Add("@ProjectCode", SqlDbType.NVarChar, 10).Value = ProjectCode;
                         cmd.Parameters.Add("@DocumentCategoryCode", SqlDbType.NVarChar, 10).Value = DocumentCategoryCode;
-                        cmd.Parameters.Add("@FunctionCode", SqlDbType.NVarChar, 10).Value = FunctionCode;
                         using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                         {
                             sda.Fill(dt);
