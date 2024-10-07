@@ -14,6 +14,7 @@ using TEPL.QMS.Common;
 using System.Text;
 using System.Net.Mail;
 using System.Security.Cryptography;
+using MvcSiteMapProvider.Collections;
 
 namespace TEPLQMS.Controllers
 {
@@ -124,19 +125,31 @@ namespace TEPLQMS.Controllers
             string result = "";
             try
             {
+                LoggerBlock.WriteLog("SubmitDocument function called.");
+
                 StringBuilder strMessage = new StringBuilder();
                 DraftDocument objDoc = CommonMethods.GetDocumentObject(Request.Form);
 
+                LoggerBlock.WriteLog("Document object created.");
+                
+
                 objDoc.CompanyCode = QMSConstants.CompanyCode;
                 objDoc.UploadedUserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
+
+
                 strMessage.AppendLine("UploadedUserID - " + objDoc.UploadedUserID.ToString() + ". ");
                 objDoc.UploadedUserName = System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserDisplayName].ToString();
+
+                
+
                 strMessage.AppendLine("DocumentID - " + objDoc.DocumentID.ToString() + ". ");
                 strMessage.AppendLine("WFExecutionID - " + objDoc.WFExecutionID.ToString() + ". ");
                 objDoc.RevisionReason = "";
                 objDoc.CurrentStageID = CurrentStageID;
                 objDoc.DraftVersion = 0.001m;
                 objDoc.Action = "Submitted";
+                LoggerBlock.WriteLog("DraftDocument fields populated.");
+
                 //DraftDocument objDoc1 =(DraftDocument)BindModels.GetObject(Request.Form);
                 //save image to images folder
                 HttpFileCollectionBase files = Request.Files;
@@ -156,12 +169,15 @@ namespace TEPLQMS.Controllers
                         flname = file.FileName;
                         byte[] fileByteArray = new byte[file.ContentLength];
                         file.InputStream.Read(fileByteArray, 0, file.ContentLength);
+                        
                         if (i == 0)
                         {
                             objDoc.EditableByteArray = fileByteArray;
                             objDoc.EditableDocumentName = objDoc.DocumentNo + Path.GetExtension(file.FileName);
                             //objDoc.EditableFilePath = CommonMethods.CombineUrl(objDoc.ProjectID.ToString(), QMSConstants.EditableFolder, objDoc.DepartmentID.ToString(), objDoc.SectionID.ToString(), objDoc.DocumentCategoryID.ToString());
                             objDoc.EditableFilePath = CommonMethods.CombineUrl(objDoc.ProjectID.ToString(), QMSConstants.EditableFolder);
+                            LoggerBlock.WriteLog("Editable file saved");
+                           
                         }
                         else if (i == 1)
                         {
@@ -169,12 +185,14 @@ namespace TEPLQMS.Controllers
                             objDoc.ReadableDocumentName = objDoc.DocumentNo + Path.GetExtension(file.FileName);
                             //objDoc.ReadableFilePath = CommonMethods.CombineUrl(objDoc.ProjectID.ToString(), QMSConstants.ReadableFolder, objDoc.DepartmentID.ToString(), objDoc.SectionID.ToString(), objDoc.DocumentCategoryID.ToString());
                             objDoc.ReadableFilePath = CommonMethods.CombineUrl(objDoc.ProjectID.ToString(), QMSConstants.ReadableFolder);
+                            LoggerBlock.WriteLog("Readable file saved");
+                            
                         }
                     }
                 }
-
                 DocumentUpload bllOBJ = new DocumentUpload();
                 bllOBJ.SubmitDocument(objDoc);
+                LoggerBlock.WriteLog("Document submitted successfully.");
 
                 result = "sucess";
             }

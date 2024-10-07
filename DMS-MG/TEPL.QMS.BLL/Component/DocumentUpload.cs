@@ -69,6 +69,9 @@ namespace TEPL.QMS.BLL.Component
         {
             try
             {
+                LoggerBlock.WriteLog("SubmitDocument BLL Method called.");
+               
+
                 WorkflowActions objWF = new WorkflowActions();
                 DocumentResponse objRes = new DocumentResponse();
                 //docOperObj.UploadDocument(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.EditableFilePath, objDoc.EditableDocumentName, objDoc.DraftVersion, objDoc.EditableByteArray);
@@ -855,6 +858,7 @@ namespace TEPL.QMS.BLL.Component
         {
             try
             {
+                LoggerBlock.WriteLog("PrepareandSendMail called.");
                 string emailIDs = GetEmailIDs(toemail);
 
                 StringBuilder body = new StringBuilder();
@@ -870,6 +874,7 @@ namespace TEPL.QMS.BLL.Component
                 string strMailTemplate = GetApprovalMailTempate();
                 strMailTemplate = strMailTemplate.Replace("@@MailBody@@", body.ToString());
                 CommonMethods.SendMail(emailIDs, subject, strMailTemplate);
+                LoggerBlock.WriteLog("PrepareandSendMail call end.");
             }
             catch (Exception ex)
             {
@@ -910,16 +915,19 @@ namespace TEPL.QMS.BLL.Component
         }
         private string GetDocumentLevel(string CategoryCode)
         {
+            LoggerBlock.WriteLog("GetDocumentLevel called.");
             string strDocLevel = string.Empty;
             strDocLevel = docOperObj.GetDocumentLevel(CategoryCode);
+            LoggerBlock.WriteLog("GetDocumentLevel call end");
             return strDocLevel;
         }
         private DocumentApprover GetDocumentApprover(Guid ProjectTypeID, Guid ProjectID, Guid NextStageID, string strDocLevel, Guid SectionID)
         {
+            LoggerBlock.WriteLog("GetDocumentApprover called.");
             WorkflowActions objWF = new WorkflowActions();
 
             List<DocumentApprover> objApprovers = objWF.GetWorkflowApprover(ProjectTypeID, ProjectID, NextStageID, strDocLevel, SectionID);
-
+            LoggerBlock.WriteLog("GetDocumentApprover called end");
             return objApprovers[0];
         }
         public List<DraftDocument> GetRequestedDocuments(Guid CreatedID)
