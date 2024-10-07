@@ -328,16 +328,23 @@
                             //Bind the data
                             for (var z = 0; z < data.message.length; z++) {
                                 //alert(data.message[z].DocumentNo);
-                                var pth = data.message[z].ReadableFilePath;
-                                var version = data.message[z].OriginalVersion;
-                                var docName = data.message[z].ReadableDocumentName;
+                                var pth = data.message[z].ReadableFilePath; // Readable file path
+                                var editablePth = data.message[z].EditableFilePath; // Editable file path
+                                var version = data.message[z].OriginalVersion; // Original version
+                                var docName = data.message[z].ReadableDocumentName; // Readable document name
+                                var editableDocName = data.message[z].EditableDocumentName; // Editable document name
                                 var downloadLink = '';
+
                                 if (data.message[z].DocumentLevel == "Level 4") {
-                                    downloadLink = '<a style="text-decoration:underline;white-space:nowrap;" href="#" onclick="DownloadPublishedDocument(\'' + pth + '\', \'' + version + '\', \'' + docName + '\');">Download</a>';
+                                    // Link for Editable Document
+                                    downloadLink += '<a style="text-decoration:underline;white-space:nowrap;" href="#" onclick="DownloadPublishedDocument(\'' + editablePth + '\', \'' + version + '\', \'' + editableDocName + '\');">Editable Document</a><br />';
+
+                                    // Link for Readable Document
+                                    downloadLink += '<a style="text-decoration:underline;white-space:nowrap;" href="#" onclick="DownloadPublishedDocument(\'' + pth + '\', \'' + version + '\', \'' + docName + '\');">Readable Document</a>';
                                 }
                                 else {
                                     //View Document Link
-                                    downloadLink = '<a target="_blank" title="View Document" style="text-decoration:underline;white-space:nowrap;" href="/PDFViewer/ConfigureDocumentURL?docURL=PublishedDocuments/'+pth+'/'+docName+'">View</a>';
+                                    downloadLink = '<a target="_blank" title="View Document" style="text-decoration:underline;white-space:nowrap;" href="/PDFViewer/ConfigureDocumentURL?docURL=PublishedDocuments/' + pth + '/' + docName + '">View</a>';
                                 }
 
                                 var detailsLink = '<span style="white-space:nowrap;">' + data.message[z].DocumentNo+'</span>'; //data.message[z].DocumentNo;
