@@ -265,6 +265,7 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\EmailtestController.cs" />
     <Compile Include="Areas\Admin\Controllers\ArchiveProjectsController.cs" />
     <Compile Include="Areas\Admin\Controllers\DefaultController.cs" />
     <Compile Include="Areas\Admin\Controllers\CategoryController.cs" />
@@ -759,6 +760,7 @@
     <Content Include="Areas\Admin\Views\AllPrintRequests\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Function\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Location\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\EmailTest\Index.cshtml" />
     <None Include="assets\js\jqueryval\jquery.validate-vsdoc.js" />
     <Content Include="assets\js\jquery-ui.min.js" />
     <Content Include="assets\js\jquery.min.js" />

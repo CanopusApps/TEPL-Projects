@@ -97,6 +97,7 @@ namespace TEPL.QMS.DAL.Database.Component
         {
             try
             {
+                LoggerBlock.WriteLog("DocumentUpdate function called");
                 //objDoc.RevisionReason = "";
                 using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
                 {
@@ -133,6 +134,7 @@ namespace TEPL.QMS.DAL.Database.Component
             {
                 LoggerBlock.WriteTraceLog(ex);
             }
+            LoggerBlock.WriteLog("DocumentUpdate function call end");
             return objDoc;
         }
         public DraftDocument DocumentUpdatePublised(DraftDocument objDoc, Boolean isDocUploaded, string Comments)
@@ -826,6 +828,7 @@ namespace TEPL.QMS.DAL.Database.Component
         }
         public string UploadWithOutEncryptedDocument(string StoragePath, string baseFolder, string folderPath, string filename, Decimal DocVerions, byte[] byteArray)
         {
+            LoggerBlock.WriteLog("UploadWithOutEncryptedDocument Method called.");
             try
             {
                 string filePath = CommonMethods.CombineUrl(StoragePath, baseFolder, folderPath);
@@ -857,6 +860,7 @@ namespace TEPL.QMS.DAL.Database.Component
                 {
                     fsCrypt.Close();
                 }
+                LoggerBlock.WriteLog("UploadWithOutEncryptedDocument Method end.");
                 return cryptFile;
             }
             catch (Exception ex)

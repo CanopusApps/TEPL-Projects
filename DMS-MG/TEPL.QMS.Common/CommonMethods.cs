@@ -273,7 +273,7 @@ namespace TEPL.QMS.Common
             return metaData;
         }
         public static DraftDocument GetDocumentObject(NameValueCollection RequestForm)
-        {
+        {         
             Dictionary<string, object> dict2 = new Dictionary<string, object>();
             foreach (string str in RequestForm.AllKeys)
             {
