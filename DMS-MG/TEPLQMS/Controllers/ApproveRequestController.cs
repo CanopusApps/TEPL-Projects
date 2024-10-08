@@ -179,7 +179,7 @@ namespace TEPLQMS.Controllers
                 if (Request.Form["EditableDocumentUploaded"].ToString() == "yes")
                     isDocumentUploaded = true;
              
-                if (Request.Form["DocumentCategoryCode"].ToString() == "FR")
+                if (Request.Form["DocumentLevel"].ToString() == "Level 4")
                 {
                     objDoc.ReadableDocumentName = Request.Form["EditableDocumentName"].ToString();
                 }                    
@@ -211,7 +211,7 @@ namespace TEPLQMS.Controllers
                             {
                                 objDoc.EditableByteArray = fileByteArray;
                                 objDoc.EditableDocumentName = objDoc.DocumentNo + Path.GetExtension(file.FileName);
-                                if (Request.Form["DocumentCategoryCode"].ToString() == "FR")
+                                if (Request.Form["DocumentLevel"].ToString() == "Level 4")
                                 {
                                     objDoc.ReadableByteArray = fileByteArray;
                                     objDoc.ReadableDocumentName = objDoc.DocumentNo + Path.GetExtension(file.FileName);
@@ -228,7 +228,7 @@ namespace TEPLQMS.Controllers
                 {
                     string EditableURL = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.EditableFilePath, objDoc.EditableDocumentName);
                     string ReadableURL = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName);
-                    if (Request.Form["DocumentCategoryCode"].ToString() == "FR")
+                    if (Request.Form["DocumentLevel"].ToString() == "Level 4")
                     {
                         ReadableURL = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.EditableFilePath, objDoc.ReadableDocumentName);
                     }

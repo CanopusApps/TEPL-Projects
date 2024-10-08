@@ -20,6 +20,7 @@ using PdfSharp.Pdf.IO;
 using PdfSharp.Pdf;
 using System.Data.SqlClient;
 using System.Web.UI.WebControls;
+using TEPL.QMS.Common.Model;
 
 namespace TEPL.QMS.BLL.Component
 {
@@ -782,10 +783,15 @@ namespace TEPL.QMS.BLL.Component
 
                     
                 }
-                string filePath = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName);
-                AddWatermarkonPDF(filePath, objDoc.DocumentLevel);
-                string filePath2 = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName);
-                AddWatermarkonPDF(filePath2, objDoc.DocumentLevel);
+                if (objDoc.DocumentLevel.ToString() != "Level 4")
+                {
+                    string filePath = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName);
+
+                    AddWatermarkonPDF(filePath, objDoc.DocumentLevel);
+                    string filePath2 = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName);
+                    AddWatermarkonPDF(filePath2, objDoc.DocumentLevel);
+                }
+                
 
                 docOperObj.DocumentDescriptionUpdate(objDoc);
                 objWF.ExecuteAction(objDoc.WFExecutionID, objDoc.CurrentStageID, objDoc.ActionedID, objDoc.Action, objDoc.ActionComments, objDoc.ActionedID, isDocumentUploaded);
