@@ -53,7 +53,7 @@ namespace TEPLQMS.Areas.Admin.Controllers
                     {
                         smtp.UseDefaultCredentials = false;
                         smtp.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["EmailUserName"], ConfigurationManager.AppSettings["EmailPassword"]);
-                        smtp.EnableSsl = true;
+                        smtp.EnableSsl = false;
                         smtp.Send(mail);
                     }
                 }
