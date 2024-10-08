@@ -171,15 +171,18 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 col-sm-6 col-xs-12">
-                <div class="form-group">
-                    <label class="control-label col-lg-4"><strong>Readable Document</strong></label>
-                    <div class=" col-lg-7">
-                        <input class="form-control" id="DOCFile2" name="DOC2" type="file" value="">
+            @if (ViewBag.Data != null && ViewBag.Data.DocumentLevel != "Level 4")
+            {
+                <div class="col-lg-6 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                        <label class="control-label col-lg-4"><strong>Readable Document</strong></label>
+                        <div class=" col-lg-7">
+                            <input class="form-control" id="DOCFile2" name="DOC2" type="file" value="">
+                        </div>
                     </div>
-                </div>
 
-            </div>
+                </div>
+            }
         </div>
         @if (@ViewBag.Data.DocumentPublishID.ToString() == "00000000-0000-0000-0000-000000000000")
         {
