@@ -385,6 +385,16 @@
                 }
             }
             fileData.append('EditableDocumentUploaded', isExist);
+            if (DocumentLevel == "Level 4" && isExist == "yes")
+            {
+                if ($("#txtComments").val().trim() == '') {
+                    $("#txtComments").addClass("manfieldredborder");
+                    $('.btn-warning').trigger('click');
+                    $('.modal-body').html('Comments mandatory when you upload the Documents');
+                    isProceed = false;
+                    return false;
+                }    
+            }
             isExist = 'no';
             //Files - Readable Document            
             var ext2 = ''; var fileSize2 = 0;
