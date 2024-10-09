@@ -23,6 +23,16 @@
         <div style="text-align: center;">
             <button type="button" id="sendEmailButton" style="padding: 10px 20px; background-color: #007BFF; color: white; border: none; border-radius: 3px;">Send Email</button>
         </div>
+        <div>
+            <label>Upload<span class="text-danger">*</span></label>
+            <input type="file" id="file" name="file" class="form-control" accept=".xlsx, .xls">
+        </div>
+        <br />
+        <div>
+            <div>
+                <button type="button" id="uploadusers" class="btn btn-block-custom btn-azure" style="width:60%;margin-left:0px;">Upload</button>
+            </div>
+        </div>
     </div>
 </body>
 
@@ -69,6 +79,43 @@
                 });
             });
         });
+    </script>
+    <script>
+        //This script is used to Upload Bulk User .
+        $(document).ready(function () {
+            $('#uploadusers').click(function () {
+                var fileInput = $('#file')[0];
+                var file = fileInput.files[0];
+                if (file) {
+                    var formData = new FormData();
+                    formData.append('file', file);
+                    $.ajax({
+                        url: '/Emailtest/Upload',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            $('#file').val('');
+                            if (response === "File uploaded successfully.") {
+                                alert(response);
+                            } 
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            console.log("Error response:", jqXHR, textStatus, errorThrown);
+                            swal({
+                                title: "Error!",
+                                text: "File upload failed due to an internal server error.",
+                                icon: "error",
+                            });
+                        }
+                    });
+                } else {
+                    swal('Please select a file to upload.');
+                }
+            });
+        });
+
     </script>
 
 }
