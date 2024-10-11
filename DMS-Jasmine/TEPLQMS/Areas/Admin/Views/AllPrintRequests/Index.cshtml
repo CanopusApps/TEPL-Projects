@@ -136,7 +136,12 @@
                                     detailsLink = '<a  style="text-decoration:underline;" href="#" onclick="showDetails(\'' + data.message[z].DocumentID + '\',\'' + data.message[z].CurrentStage + '\');">View Details</a>';
                                 }
                                 else {
-                                    detailsLink = '<a  style="text-decoration:underline;" href="#" onclick="showPrintDetails(\'' + data.message[z].DocumentID + '\',\'' + data.message[z].CurrentStage + '\');">View Details</a>';
+                                    /*detailsLink = '<a  style="text-decoration:underline;" href="#" onclick="showPrintDetails(\'' + data.message[z].DocumentID + '\',\'' + data.message[z].CurrentStage + '\');">View Details</a>';*/
+                                    detailsLink = '<a style="text-decoration:underline;" href="#" onclick="showPrintDetails(\''
+                                        + data.message[z].DocumentID + '\',\''
+                                        + data.message[z].CurrentStage + '\',\''
+                                        + data.message[z].DocumentNo + '\','
+                                        + data.message[z].Version + ');">View Details</a>';
                                 }
 
                                 var record = [data.message[z].SeqNo, data.message[z].DocumentID, data.message[z].RequestType, data.message[z].DocumentNo, data.message[z].DepartmentName, data.message[z].SectionName, data.message[z].ProjectName, data.message[z].DocumentCategoryName, ToJavaScriptDate(data.message[z].CreatedDate), data.message[z].CurrentStage, detailsLink];
@@ -152,9 +157,14 @@
             });
         } 
         
-        function showPrintDetails(docID, stage) {
-            //alert(docID + '-' + stage);
-            window.location = '/PrintRequest/Details?ID=' + docID + '&stage=' + stage +'&display=true';
+        //function showPrintDetails(docID, stage) {
+        //    //alert(docID + '-' + stage);
+        //    window.location = '/PrintRequest/Details?ID=' + docID + '&stage=' + stage +'&display=true';
+        //}
+        function showPrintDetails(docID, stage, documentNo, version) {
+            // Optional: Log the parameters for debugging
+            // alert(docID + '-' + stage + '-' + documentNo + '-' + version);
+            window.location = '/PrintRequest/Details?ID=' + docID + '&stage=' + stage + '&documentNo=' + encodeURIComponent(documentNo) + '&version=' + version + '&display=true';
         }
         
     </script>

@@ -60,6 +60,7 @@ namespace TEPL.QMS.Common.Constants
         public static string spGetApprovedPrintRequests = "spGetApprovedPrintRequests";
         public static string spGetDocumentDetailsByID = "spGetDocumentDetailsByID";
         public static string spGetPrintRequestDetailsByID = "spGetPrintRequestDetailsByID";
+        public static string spGetPrintsRequestDetailsByID = "spGetPrintsRequestDetailsByID";
         public static string spGetPublishedDocuments = "spGetPublishedDocuments";
         public static string spGetPublishedDocuments_ServerSide = "spGetPublishedDocuments_ServerSide";
         public static string spGetArchivedDocuments = "spGetArchivedDocuments";

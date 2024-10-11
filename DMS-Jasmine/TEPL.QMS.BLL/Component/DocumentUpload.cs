@@ -976,7 +976,7 @@ namespace TEPL.QMS.BLL.Component
                     obj.ProjectName = dt.Rows[z]["ProjectName"].ToString();
                     obj.CreatedDate = DateTime.Parse(dt.Rows[z]["CreatedDate"].ToString());
                     obj.CurrentStage = dt.Rows[z]["CurrentStage"].ToString();
-
+                    obj.Version = Convert.ToInt32(dt.Rows[z]["RevisionNo"]);
                     objDocuments.Add(obj);
                 }
             }
@@ -1169,6 +1169,23 @@ namespace TEPL.QMS.BLL.Component
             try
             {
                 string strReturn = docOperObj.GetPrintRequestDetailsByID(role, loggedInUserID, PrintRequestID);
+                List<PrintRequest> objDraft = BindModels.ConvertJSON<PrintRequest>(strReturn);
+                if (objDraft != null)
+                    objDocuments = objDraft[0];
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+            return objDocuments;
+        }
+        public PrintRequest GetPrintsRequestDetailsByID(string role, Guid loggedInUserID, Guid PrintRequestID, int version,string documentNo)
+        {
+            PrintRequest objDocuments = null;
+            try
+            {
+                string strReturn = docOperObj.GetPrintsRequestDetailsByID(role, loggedInUserID, PrintRequestID,version, documentNo);
                 List<PrintRequest> objDraft = BindModels.ConvertJSON<PrintRequest>(strReturn);
                 if (objDraft != null)
                     objDocuments = objDraft[0];

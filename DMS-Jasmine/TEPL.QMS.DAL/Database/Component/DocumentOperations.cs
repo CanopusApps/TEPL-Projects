@@ -423,6 +423,38 @@ namespace TEPL.QMS.DAL.Database.Component
             }
             return strReturn;
         }
+        public string GetPrintsRequestDetailsByID(string role, Guid loggedInUserID, Guid PrintRequestID, int version, string documentNo)
+        {
+            string strReturn = string.Empty;
+            try
+            {
+                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
+                {
+                    con.Open();
+                    using (SqlCommand cmd = new SqlCommand(QMSConstants.spGetPrintsRequestDetailsByID, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@PrintRequestID", SqlDbType.UniqueIdentifier).Value = PrintRequestID;
+                        cmd.Parameters.Add("@Role", SqlDbType.NVarChar, 10).Value = role;
+                        cmd.Parameters.Add("@LoginUserID", SqlDbType.UniqueIdentifier).Value = loggedInUserID;
+                        cmd.Parameters.Add("@Revision", SqlDbType.Int).Value = version;
+                        cmd.Parameters.Add("@DocumentNo", SqlDbType.NVarChar, 70).Value = documentNo;
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            DataTable dt = new DataTable();
+                            sda.Fill(dt);
+                            strReturn = dt.Rows[0][0].ToString();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+                throw ex;
+            }
+            return strReturn;
+        }
 
         public string GetDocumentDetailsByNo(string DocumentNo)
         {
