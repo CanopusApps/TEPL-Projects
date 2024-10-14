@@ -942,6 +942,7 @@ namespace TEPL.QMS.BLL.Component
                     obj.SectionName = dt.Rows[z]["SectionName"].ToString();
                     obj.DocumentCategoryName = dt.Rows[z]["DocumentCategoryName"].ToString();
                     obj.ProjectName = dt.Rows[z]["ProjectName"].ToString();
+                    obj.Version = Convert.ToInt32(dt.Rows[z]["Version"]);
                     obj.CreatedDate = DateTime.Parse(dt.Rows[z]["CreatedDate"].ToString());
                     obj.CurrentStage = dt.Rows[z]["CurrentStage"].ToString();
 

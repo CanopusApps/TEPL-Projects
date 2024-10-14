@@ -37,13 +37,13 @@ namespace TEPLQMS.Controllers
 
             if (Request.QueryString["version"] != null) // Retrieve Version from query string
                 int.TryParse(Request.QueryString["version"], out version);
-
+            
             if (!string.IsNullOrEmpty(strID))
             {
                 Guid loggedUsedID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
 
                 
-                PrintRequest request = obj.GetPrintsRequestDetailsByID("Approver", loggedUsedID, new Guid(strID), version, documentNo);
+                PrintRequest request = obj.GetPrintsRequestDetailsByID("User", loggedUsedID, new Guid(strID), version, documentNo);
 
                 // Set the ViewBag.Data
                 ViewBag.Data = request;
