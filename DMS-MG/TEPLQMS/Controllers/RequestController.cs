@@ -97,15 +97,15 @@ namespace TEPLQMS.Controllers
                 //{
                 //    ViewBag.Data = obj.GetDocumentDetailsByID("User", loggedUsedID, new Guid(strID));
                 //}
-                if (isArchived)
-                {
-                    ViewBag.Data = obj.GetAchievedDocumentDetailsByID(loggedUsedID, new Guid(strID), isHistory);
-                }
-                else
-                {
+                //if (isArchived)
+                //{
+                //    ViewBag.Data = obj.GetAchievedDocumentDetailsByID(loggedUsedID, new Guid(strID), isHistory);
+                //}
+                //else
+                //{
 
-                    ViewBag.Data = obj.GetPublishedDocumentDetailsByID(loggedUsedID, new Guid(strID), isHistory);
-                }
+                //}
+                ViewBag.Data = obj.GetPublishedDocumentDetailsByID(loggedUsedID, new Guid(strID), isHistory);
 
 
                 string strRoles = System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserRoles].ToString();
