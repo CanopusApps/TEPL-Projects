@@ -816,6 +816,7 @@ namespace TEPL.QMS.BLL.Component
         public string ReplaceDocument(DraftDocument objDoc, bool isDocumentUploaded, string Comments)
         {
             string result = "";
+            string documentLevel = objDoc.DocumentLevel;
             try
             {
                 if (isDocumentUploaded)
@@ -823,11 +824,13 @@ namespace TEPL.QMS.BLL.Component
                     //docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDoc.EditableFilePath, objDoc.EditableDocumentName, objDoc.EditVersion, objDoc.EditableByteArray);
                     //docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName, objDoc.EditVersion, objDoc.ReadableByteArray);
                     docOperObj.UploadWOEncryptWOBackup(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDoc.EditableFilePath, objDoc.EditableDocumentName, objDoc.EditVersion, objDoc.EditableByteArray);
+                    if (documentLevel != "Level 4") 
+                    { 
+                        docOperObj.UploadWOEncryptWOBackup(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName, objDoc.EditVersion, objDoc.ReadableByteArray);
+                        string filePath = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName);
+                        AddWatermarkonPDF(filePath, objDoc.DocumentLevel);
+                    }
                     
-                    docOperObj.UploadWOEncryptWOBackup(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName, objDoc.EditVersion, objDoc.ReadableByteArray);
-                                        
-                    string filePath = CommonMethods.CombineUrl(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName);
-                    AddWatermarkonPDF(filePath, objDoc.DocumentLevel);
                 }
                 objDoc.EditVersion = objDoc.EditVersion + 0.001m;
                 docOperObj.DocumentUpdatePublised(objDoc, isDocumentUploaded, Comments);
