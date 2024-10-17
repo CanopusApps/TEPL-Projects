@@ -426,7 +426,7 @@ namespace TEPLQMS.Controllers
                             {
                                 objDoc.EditableByteArray = fileByteArray;
                                 objDoc.EditableDocumentName = objDoc.DocumentNo + Path.GetExtension(file.FileName);
-                                if (Request.Form["DocumentCategoryCode"].ToString() == "FR")
+                                if (Request.Form["DocumentLevel"].ToString() == "Level 4")
                                 {
                                     objDoc.ReadableByteArray = fileByteArray;
                                     objDoc.ReadableDocumentName = objDoc.DocumentNo + Path.GetExtension(file.FileName);
