@@ -1866,6 +1866,35 @@ namespace TEPL.QMS.DAL.Database.Component
             }
             return dt;
         }
+        public string  ValidateInputDocNumber(string documentNumber)
+        {
+            string message = string.Empty;
+            DataTable dt = new DataTable();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(QMSConstants.DBCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(QMSConstants.CheckDocumentExistence, con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@DocumentNo", SqlDbType.NVarChar, 70).Value = documentNumber;
+                        using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                        {
+                            sda.Fill(dt);
+                        }
+                    }
+                }
+                if (dt.Rows.Count > 0)
+                {
+                    message = dt.Rows[0]["OutputMessage"].ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return message; 
+        }
         public DataTable AddFunction(Function objFunc)
         {
             DataTable dt = new DataTable();

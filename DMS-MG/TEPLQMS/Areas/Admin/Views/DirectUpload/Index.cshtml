@@ -203,16 +203,74 @@
         }
                 
         $("#btnValidate").click(function () {
+            //if (ValidateFormFields(".manfieldG")) {
+            //    var fileData = new FormData();
+            //    fileData.append('DocumentNumber', $("#DocumentNo").val());
+            //    fileData.append('SerialNumber', $("#DocumentNo1").val());
+            //    fileData.append('CategoryCode', $("#ddlDocCategory option:selected").attr('code'));
+            //    fileData.append('ProjectCode', $("#ddlProject option:selected").attr('code'));
+            //    fileData.append('DepartmentCode', $("#ddlDepartment option:selected").attr('code'));
+            //    fileData.append('SectionCode', $("#ddlSection option:selected").attr('code'));
+            //    $.ajax({
+            //        url: "/DirectUpload/ValidateDocumentNumber",
+            //        dataType: "json",
+            //        type: "POST",
+            //        beforeSend: function () {
+            //            $("#overlay").show();
+            //            $("#overlay").addClass('modal-backdrop fade in');
+            //            $("#sidebar").addClass('modal-backdrop fade in');
+            //        },
+            //        complete: function () {
+            //            $("#overlay").hide();
+            //            $("#overlay").removeClass('modal-backdrop fade in');
+            //            $("#sidebar").removeClass('modal-backdrop fade in');
+            //        },
+            //        contentType: false,
+            //        processData: false,
+            //        cache: false,
+            //        data: fileData,
+            //        success: function (data) {
+            //            if (data.success) {
+            //                //alert(data.message);
+            //                var results = data.message;
+            //                var docExists = results.toString().split('#')[0];
+            //                var snoresp = results.toString().split('#')[1];
+            //                var serino = results.toString().split('#')[2];
+            //                var altMessage = '';
+            //                if (docExists == 'doc exists') {
+            //                    altMessage = 'Not Possible to Proceed as Document Already Exists';
+            //                    $("#btnSubmit").hide();
+            //                    $('.btn-warning').trigger('click');
+            //                    $('.modal-body').html(altMessage);
+            //                }
+            //                else {
+            //                    if (snoresp == 'sno updated') {
+            //                        altMessage = 'Current Serial Number - ' + serino;
+            //                        altMessage += '<br />';
+            //                        altMessage += 'Serial number will be Updated when you submit';
+            //                        $('.btn-warning').trigger('click');
+            //                        $('.modal-body').html(altMessage);
+            //                    }
+            //                    else {
+            //                        altMessage = 'You can proceed and submit the Document';
+            //                        $('.btn-success').trigger('click');
+            //                        $('.modal-body').html(altMessage);
+            //                    }
+            //                    $("#btnSubmit").show();
+            //                }
+            //            }
+            //        },
+            //        error: function (xhr) {
+            //            alert('error ' + xhr.message);
+            //        }
+            //    });
+            //}
             if (ValidateFormFields(".manfieldG")) {
                 var fileData = new FormData();
                 fileData.append('DocumentNumber', $("#DocumentNo").val());
                 fileData.append('SerialNumber', $("#DocumentNo1").val());
-                fileData.append('CategoryCode', $("#ddlDocCategory option:selected").attr('code'));
-                fileData.append('ProjectCode', $("#ddlProject option:selected").attr('code'));
-                fileData.append('DepartmentCode', $("#ddlDepartment option:selected").attr('code'));
-                fileData.append('SectionCode', $("#ddlSection option:selected").attr('code'));
                 $.ajax({
-                    url: "/DirectUpload/ValidateDocumentNumber",
+                    url: "/DirectUpload/ValidateDoc",
                     dataType: "json",
                     type: "POST",
                     beforeSend: function () {
@@ -233,31 +291,19 @@
                         if (data.success) {
                             //alert(data.message);
                             var results = data.message;
-                            var docExists = results.toString().split('#')[0];
-                            var snoresp = results.toString().split('#')[1];
-                            var serino = results.toString().split('#')[2];
                             var altMessage = '';
-                            if (docExists == 'doc exists') {
+                            if (results == 'Document No already exists.') {
                                 altMessage = 'Not Possible to Proceed as Document Already Exists';
                                 $("#btnSubmit").hide();
                                 $('.btn-warning').trigger('click');
                                 $('.modal-body').html(altMessage);
                             }
-                            else {                                
-                                if (snoresp == 'sno updated') {
-                                    altMessage = 'Current Serial Number - ' + serino;
-                                    altMessage += '<br />';
-                                    altMessage += 'Serial number will be Updated when you submit';
-                                    $('.btn-warning').trigger('click');
-                                    $('.modal-body').html(altMessage);
-                                }
-                                else {
-                                    altMessage = 'You can proceed and submit the Document';
-                                    $('.btn-success').trigger('click');
-                                    $('.modal-body').html(altMessage);
-                                }
+                            else {
+                                altMessage = 'You can proceed and submit the Document';
+                                $('.btn-success').trigger('click');
+                                $('.modal-body').html(altMessage); 
                                 $("#btnSubmit").show();
-                            }                            
+                            }
                         }
                     },
                     error: function (xhr) {
@@ -297,8 +343,8 @@
                     fileData.append('ProjectTypeID', $("#ddlProject option:selected").attr('projTypeID'));
                     fileData.append('ProjectTypeCode', $("#ddlProject option:selected").attr('projTypeCode'));
                 }
-                fileData.append('DocumentNo', $("#DocumentNo").val().trim());
-                fileData.append('DocumentSerialNo', $("#DocumentNo1").val().trim());
+                fileData.append('DocumentNumber', $("#DocumentNo").val());
+                fileData.append('SerialNumber', $("#DocumentNo1").val().trim());
                 fileData.append('DocumentDescription', $("#DocumentDescription").val().trim());
                 fileData.append('Comments', $("#txtComments").val().trim());
 
