@@ -66,6 +66,19 @@ namespace TEPL.QMS.BLL.Component
             }
             return ArrayOfObjects;
         }
+        public DraftDocument SaveDocumentNumber(DraftDocument objDoc)
+        {
+            try
+            {
+                objDoc.DocumentLevel = GetDocumentLevel(objDoc.DocumentCategoryCode);
+                objDoc = docOperObj.InsertDocumentNo(objDoc); 
+            }
+            catch (Exception ex)
+            {
+                LoggerBlock.WriteTraceLog(ex);
+            }
+            return objDoc;
+        }
         public DraftDocument SubmitDocument(DraftDocument objDoc)
         {
             try
@@ -1468,8 +1481,7 @@ namespace TEPL.QMS.BLL.Component
 
                 docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDoc.EditableFilePath, objDoc.EditableDocumentName, objDoc.EditVersion, objDoc.EditableByteArray);
                 docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName, objDoc.EditVersion, objDoc.ReadableByteArray);
-
-                docOperObj.DocumentUpdate(objDoc);
+                docOperObj.UpdateDocDetails(objDoc);
 
                 Stage objSt = objWF.GetWorkflowStage(QMSConstants.WorkflowID, objDoc.CurrentStageID);
                 if (objSt.IsDocumentLevelRequired)

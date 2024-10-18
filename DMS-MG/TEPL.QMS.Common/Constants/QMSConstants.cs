@@ -37,6 +37,7 @@ namespace TEPL.QMS.Common.Constants
         public static string ExtDocumentFolder = Convert.ToString(ConfigurationManager.AppSettings["ExtDocumentFolder"]);
         public static string EncryptionKey = Convert.ToString(ConfigurationManager.AppSettings["EncryptionKey"]);
         public static Guid WorkflowID = Guid.Parse(ConfigurationManager.AppSettings["WorkflowID"]);
+        public static Guid DirectUploadWorkflowID = Guid.Parse(ConfigurationManager.AppSettings["DirectUploadWorkflowID"]);
         public static Guid PrintWorkflowID = Guid.Parse(ConfigurationManager.AppSettings["PrintWorkflowID"]);
         public static string QMSHeadEmail = Convert.ToString(ConfigurationManager.AppSettings["QMSHeadEmail"]);
         public static string AuthCookieName = Convert.ToString(ConfigurationManager.AppSettings["AuthCookieName"]);
@@ -48,11 +49,13 @@ namespace TEPL.QMS.Common.Constants
         
 
         //StoredProcedures
-        public static string spGenerateDocumentNo = "spGenerateDocumentNo";
+        public static string spGenerateDocumentNo = "spGenerateDocumentNo"; 
+        public static string spInsertDocumentNo = "spInsertDocumentNo";
         public static string spGenerateDocumentNoLevel1 = "spGenerateDocumentNoLevel1";
         public static string spGetDocumentNumbers = "spGetDocumentNumbers";
-        public static string spGetDocumentLevel = "spGetDocumentLevel";
-        public static string spDocumentUpdate = "spDocumentUpdate";
+        public static string spGetDocumentLevel = "spGetDocumentLevel"; 
+        public static string spDocumentUpdate = "spDocumentUpdate"; 
+        public static string spUpdateDocumentDetails = "spUpdateDocumentDetails";
         public static string spDocumentUpdatePublished = "spDocumentUpdatePublished";
         public static string spDocumentDescriptionUpdate = "spDocumentDescriptionUpdate";
         public static string spDocumentVersionUpdate = "spDocumentVersionUpdate";
@@ -140,7 +143,8 @@ namespace TEPL.QMS.Common.Constants
         public static string spUpdateExternalSubCategory = "spUpdateExternalSubCategory";
         public static string spUpdateDocumentNo = "spUpdateDocumentNo";
         public static string spGetUserApprovalItemsForAMID = "spGetUserApprovalItemsForAMID";
-        public static string spValidateDocumentNumber = "spValidateDocumentNumber";
+        public static string spValidateDocumentNumber = "spValidateDocumentNumber"; 
+        public static string CheckDocumentExistence = "CheckDocumentExistence";
         public static string spCreatePrintRequest = "spCreatePrintRequest";
         public static string spAddFunction = "spAddFunction";
         public static string spUpdateFunction = "spUpdateFunction";

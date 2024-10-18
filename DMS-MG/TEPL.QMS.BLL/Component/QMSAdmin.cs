@@ -1649,7 +1649,7 @@ namespace TEPL.QMS.BLL.Component
             }
             return strReturn;
         }
-
+        
         public string ValidateDocumentNumber(string documentNumber, int serialNo, string catCode, string projCode, string deptCode, string secCode)
         {
             string strReturn = string.Empty;
@@ -1658,6 +1658,20 @@ namespace TEPL.QMS.BLL.Component
                 DataTable dt = objAdmin.ValidateDocumentNumber(documentNumber, serialNo, catCode, projCode, deptCode, secCode);
                 if (dt.Rows.Count > 0)
                     strReturn = dt.Rows[0][0].ToString();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return strReturn;
+        }
+        public string ValidateDocNo(string documentNumber)
+        {
+            string strReturn = string.Empty;
+            try
+            {
+                 strReturn = objAdmin.ValidateInputDocNumber(documentNumber);
+                
             }
             catch (Exception ex)
             {
