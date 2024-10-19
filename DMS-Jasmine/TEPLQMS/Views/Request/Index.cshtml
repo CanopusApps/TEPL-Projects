@@ -196,14 +196,47 @@
                                         <div class="form-group">
                                             <label class="col-lg-4 control-label"><strong>Editable Document</strong></label>
                                             <label class="col-lg-7 control-label text-align-left">
-                                                @{
-                                                    @ViewBag.Data.EditableDocumentName
+                                                @*@{
+            @ViewBag.Data.EditableDocumentName
 
-                                                    if (@ViewBag.isQMSAdmin == true || ViewBag.Data.DocumentLevel == "Level 4")
+            if (@ViewBag.isQMSAdmin == true || ViewBag.Data.DocumentLevel == "Level 4")
+            {
+                <a style="text-decoration:underline;" href='@Url.Action("DownloadDocument", "Dashboard", new { folderPath = @ViewBag.Data.EditableFilePath, folder = TEPL.QMS.Common.Constants.QMSConstants.DraftFolder, versionNo= @ViewBag.Data.DraftVersion, fileName= @ViewBag.Data.EditableDocumentName })'><i class="menu-icon glyphicon glyphicon-download eye-open-font-size"></i></a>
+            }
+        }*@
+                                                @{
+                                                    if (@ViewBag.Data.CurrentStage == "Completed")
                                                     {
-                                                        <a style="text-decoration:underline;" href='@Url.Action("DownloadDocument", "Dashboard", new { folderPath = @ViewBag.Data.EditableFilePath, folder = TEPL.QMS.Common.Constants.QMSConstants.PublishedFolder, versionNo= @ViewBag.Data.DraftVersion, fileName= @ViewBag.Data.EditableDocumentName })'><i class="menu-icon glyphicon glyphicon-download eye-open-font-size"></i></a>
+                                                        <span>@ViewBag.Data.EditableDocumentName</span>
+                                                        if (ViewBag.isQMSAdmin == true || ViewBag.Data.DocumentLevel == "Level 4")
+                                                        {
+                                                            <a style="text-decoration:underline;"
+                                                               href='@Url.Action("DownloadDocument", "Dashboard", new {
+                   folderPath = @ViewBag.Data.EditableFilePath,
+                   folder = TEPL.QMS.Common.Constants.QMSConstants.PublishedFolder,
+                   versionNo = @ViewBag.Data.OriginalVersion,
+                   fileName = @ViewBag.Data.EditableDocumentName })'>
+                                                                <i class="menu-icon glyphicon glyphicon-download eye-open-font-size"></i>
+                                                            </a>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>@ViewBag.Data.EditableDocumentName</span>
+                                                        if (ViewBag.isQMSAdmin == true || ViewBag.Data.DocumentLevel == "Level 4")
+                                                        {
+                                                            <a style="text-decoration:underline;"
+                                                               href='@Url.Action("DownloadDocument", "Dashboard", new {
+                   folderPath = @ViewBag.Data.EditableFilePath,
+                   folder = TEPL.QMS.Common.Constants.QMSConstants.DraftFolder,
+                   versionNo = @ViewBag.Data.DraftVersion,
+                   fileName = @ViewBag.Data.EditableDocumentName })'>
+                                                                <i class="menu-icon glyphicon glyphicon-download eye-open-font-size"></i>
+                                                            </a>
+                                                        }
                                                     }
                                                 }
+
                                             </label>
                                         </div>
                                     </div>
