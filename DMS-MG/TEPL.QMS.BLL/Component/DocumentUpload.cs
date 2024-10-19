@@ -1479,11 +1479,11 @@ namespace TEPL.QMS.BLL.Component
                 WorkflowActions objWF = new WorkflowActions();
                 DocumentResponse objRes = new DocumentResponse();
 
-                docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDoc.EditableFilePath, objDoc.EditableDocumentName, objDoc.EditVersion, objDoc.EditableByteArray);
-                docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.PublishedFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName, objDoc.EditVersion, objDoc.ReadableByteArray);
+                docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.EditableFilePath, objDoc.EditableDocumentName, objDoc.EditVersion, objDoc.EditableByteArray);
+                docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName, objDoc.EditVersion, objDoc.ReadableByteArray);
                 docOperObj.UpdateDocDetails(objDoc);
 
-                Stage objSt = objWF.GetWorkflowStage(QMSConstants.WorkflowID, objDoc.CurrentStageID);
+                Stage objSt = objWF.GetWorkflowStage(QMSConstants.DirectUploadWorkflowID, objDoc.CurrentStageID);
                 if (objSt.IsDocumentLevelRequired)
                     objDoc.DocumentLevel = GetDocumentLevel(objDoc.DocumentCategoryCode);
                 else
@@ -1491,10 +1491,10 @@ namespace TEPL.QMS.BLL.Component
                 DocumentApprover objApprover = GetDocumentApprover(objDoc.ProjectTypeID, objDoc.ProjectID, objSt.NextStageID, objDoc.DocumentLevel, objDoc.SectionID);
                 objWF.ExecuteAction(objDoc.WFExecutionID, objDoc.CurrentStageID, objDoc.UploadedUserID, objDoc.Action, objDoc.Comments, objDoc.UploadedUserID, false);
                 objWF.CreateAction(objDoc.WFExecutionID, objSt.NextStageID, objApprover.ApprovalUser, "", objDoc.UploadedUserID);
-                bool blAppLink = objDoc.ProjectTypeCode == "MP" ? true : false;
-                //Send email - Doc Name, Doc Num, DOc ID, receipt email, stage, uploaded by ,
-                string message = objDoc.UploadedUserName + " has uploaded a document having Document Number - <b>" + objDoc.DocumentNo + "</b>, and it is waiting for your review. Please check and take an appropriate action as applicable.";
-                PrepareandSendMail(objApprover.ApprovalUserEmail, objDoc, objDoc.DocumentNo + " - QMS Reviewer - Document ready for Review", message, "ApproveRequest", blAppLink);
+                //bool blAppLink = objDoc.ProjectTypeCode == "MP" ? true : false;
+                ////Send email - Doc Name, Doc Num, DOc ID, receipt email, stage, uploaded by ,
+                //string message = objDoc.UploadedUserName + " has uploaded a document having Document Number - <b>" + objDoc.DocumentNo + "</b>, and it is waiting for your review. Please check and take an appropriate action as applicable.";
+                //PrepareandSendMail(objApprover.ApprovalUserEmail, objDoc, objDoc.DocumentNo + " - QMS Reviewer - Document ready for Review", message, "ApproveRequest", blAppLink);
             }
             catch (Exception ex)
             {
