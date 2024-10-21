@@ -85,7 +85,12 @@ namespace TEPLQMS.Areas.Admin.Controllers
             string result = "";
             try
             {
+                LoggerBlock.WriteLog("SubmitDocument function called.");
+                LoggerBlock.WriteLog("GetDocumentObject function called.");
+
                 DraftDocument objDoc = CommonMethods.GetDocumentObject(Request.Form);
+
+                LoggerBlock.WriteLog("GetDocumentObject function end.");
                 StringBuilder strMessage = new StringBuilder();
                 string DocumentNumber = Request.Form["DocumentNumber"].ToString();
                 string SerialNumber = Request.Form["SerialNumber"].ToString();
@@ -98,7 +103,9 @@ namespace TEPLQMS.Areas.Admin.Controllers
                 objDoc.CurrentStageID = CurrentStageID;
                 objDoc.UploadedUserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
                 DocumentUpload bllOBJ = new DocumentUpload();
-                objDoc=bllOBJ.SaveDocumentNumber(objDoc);
+                LoggerBlock.WriteLog("SaveDocumentNumber function called.");
+                objDoc =bllOBJ.SaveDocumentNumber(objDoc);
+                LoggerBlock.WriteLog("SaveDocumentNumber function end.");
 
                 objDoc.CompanyCode = QMSConstants.CompanyCode;
                 objDoc.UploadedUserID = (Guid)System.Web.HttpContext.Current.Session[QMSConstants.LoggedInUserID];
@@ -122,6 +129,7 @@ namespace TEPLQMS.Areas.Admin.Controllers
                     }
                     else
                     {
+                        LoggerBlock.WriteLog("Document save function called.");
                         flname = file.FileName;
                         byte[] fileByteArray = new byte[file.ContentLength];
                         file.InputStream.Read(fileByteArray, 0, file.ContentLength);
@@ -140,9 +148,11 @@ namespace TEPLQMS.Areas.Admin.Controllers
                             objDoc.ReadableFilePath = CommonMethods.CombineUrl(objDoc.ProjectID.ToString(), QMSConstants.ReadableFolder);
                         }
                     }
+                    LoggerBlock.WriteLog("Document save function end.");
                 }
+                LoggerBlock.WriteLog("DocumentDirectUpload function Called.");
                 bllOBJ.DocumentDirectUpload(objDoc);
-
+                LoggerBlock.WriteLog("DocumentDirectUpload function end.");
                 result = "success";
             }
             catch (Exception ex)
