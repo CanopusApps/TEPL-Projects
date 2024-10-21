@@ -1479,18 +1479,41 @@ namespace TEPL.QMS.BLL.Component
                 WorkflowActions objWF = new WorkflowActions();
                 DocumentResponse objRes = new DocumentResponse();
 
+                LoggerBlock.WriteLog("UploadWithOutEncryptedDocument editable function Called.");
                 docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.EditableFilePath, objDoc.EditableDocumentName, objDoc.EditVersion, objDoc.EditableByteArray);
-                docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName, objDoc.EditVersion, objDoc.ReadableByteArray);
-                docOperObj.UpdateDocDetails(objDoc);
+                LoggerBlock.WriteLog("UploadWithOutEncryptedDocument editable function end.");
 
+                LoggerBlock.WriteLog("UploadWithOutEncryptedDocument Readable function Called.");
+                docOperObj.UploadWithOutEncryptedDocument(QMSConstants.StoragePath, QMSConstants.DraftFolder, objDoc.ReadableFilePath, objDoc.ReadableDocumentName, objDoc.EditVersion, objDoc.ReadableByteArray);
+                LoggerBlock.WriteLog("UploadWithOutEncryptedDocument Readable function end.");
+
+                LoggerBlock.WriteLog("UpdateDocDetails function Called.");
+                docOperObj.UpdateDocDetails(objDoc);
+                LoggerBlock.WriteLog("UpdateDocDetails function end.");
+
+                LoggerBlock.WriteLog("GetWorkflowStage function Called.");
                 Stage objSt = objWF.GetWorkflowStage(QMSConstants.DirectUploadWorkflowID, objDoc.CurrentStageID);
+                LoggerBlock.WriteLog("GetWorkflowStage function end.");
+
+                LoggerBlock.WriteLog("GetDocumentLevel function Called.");
                 if (objSt.IsDocumentLevelRequired)
                     objDoc.DocumentLevel = GetDocumentLevel(objDoc.DocumentCategoryCode);
                 else
                     objDoc.DocumentLevel = "";
+                LoggerBlock.WriteLog("GetDocumentLevel function end.");
+
+                LoggerBlock.WriteLog("GetDocumentApprover function Called.");
                 DocumentApprover objApprover = GetDocumentApprover(objDoc.ProjectTypeID, objDoc.ProjectID, objSt.NextStageID, objDoc.DocumentLevel, objDoc.SectionID);
+                LoggerBlock.WriteLog("GetDocumentApprover function end.");
+
+                LoggerBlock.WriteLog("ExecuteAction function Called.");
                 objWF.ExecuteAction(objDoc.WFExecutionID, objDoc.CurrentStageID, objDoc.UploadedUserID, objDoc.Action, objDoc.Comments, objDoc.UploadedUserID, false);
+                LoggerBlock.WriteLog("ExecuteAction function end.");
+
+                LoggerBlock.WriteLog("CreateAction function Called.");
                 objWF.CreateAction(objDoc.WFExecutionID, objSt.NextStageID, objApprover.ApprovalUser, "", objDoc.UploadedUserID);
+                LoggerBlock.WriteLog("CreateAction function end.");
+
                 //bool blAppLink = objDoc.ProjectTypeCode == "MP" ? true : false;
                 ////Send email - Doc Name, Doc Num, DOc ID, receipt email, stage, uploaded by ,
                 //string message = objDoc.UploadedUserName + " has uploaded a document having Document Number - <b>" + objDoc.DocumentNo + "</b>, and it is waiting for your review. Please check and take an appropriate action as applicable.";
